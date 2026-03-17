@@ -18,6 +18,8 @@ Started: Tue Mar 17 18:02:55 CET 2026
 - SE2 scaffold hooks: `useScaffoldReadContract`, `useScaffoldWriteContract`, `useScaffoldEventHistory`
 - Use `--legacy-peer-deps` for npm install (React 19 peer dep conflicts with some packages)
 - Nav links configured in `apps/web/components/Header.tsx` `menuLinks` array
+- SE2 scaffold hooks expect args as `[valueOrUndefined]` tuple, not `undefined` for the entire array
+- Use `getBlockExplorerTxLink(chainId, txHash)` from `~~/utils/scaffold-eth/networks` for Etherscan links
 ---
 
 ## 2026-03-17 - US-001
@@ -81,4 +83,23 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - SE2 creates-eth@2.0.10 uses yarn by default; switched to npm with `--legacy-peer-deps` for React 19 compat
   - SE2 has a pre-existing TS issue in useScaffoldEventHistory.ts with deployedOnBlock type - needs cast to fix
   - burner-connector package removed; RevealBurnerPKModal stubbed as no-op
+---
+
+## 2026-03-17 - US-004
+- Implemented code claiming flow with real-time validation and mint UI at /claim
+- Input validates: length (1-32), lowercase alphanumeric + underscore only
+- Debounced on-chain availability check via useScaffoldReadContract (codeExists)
+- Green check / red X availability indicator in input field
+- Mint button with useScaffoldWriteContract, loading spinner during transaction
+- Error handling: wallet rejection, code taken (race condition), generic errors via getParsedError
+- Success state: shows minted code, token ID, owner address, Etherscan tx link, "View My Codes" link
+- Wallet not connected state handled with prompt message
+- Files changed:
+  - `apps/web/app/claim/page.tsx` (new)
+- **Learnings for future iterations:**
+  - SE2 scaffold hooks expect args as `[valueOrUndefined]` tuple (not `undefined` for the whole array) - the hook disables the query when any arg is `undefined`
+  - Use `notification.success/error` from `~~/utils/scaffold-eth` for toast messages
+  - `getParsedError` from `~~/utils/scaffold-eth/getParsedError` provides user-friendly error messages from viem/wagmi errors
+  - `getBlockExplorerTxLink(chainId, txHash)` from `~~/utils/scaffold-eth/networks` builds Etherscan links
+  - Prettier enforces specific import ordering - keep scaffold-eth imports grouped
 ---

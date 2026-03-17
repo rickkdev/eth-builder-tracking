@@ -107,7 +107,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-004 - Code claiming flow - mint UI with real-time validation'. No co-author lines."
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Core UX flow. Ethskills frontend: 'Display loading states on all async operations.' No payout address field needed - NFT ownership IS the identity."
     },
     {
