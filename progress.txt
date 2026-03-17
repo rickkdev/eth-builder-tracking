@@ -11,6 +11,13 @@ Started: Tue Mar 17 18:02:55 CET 2026
 - Forge linter notes about plain imports and asm-keccak256 are informational only, not errors
 - Foundry scripts go in `contracts/script/`, use `vm.startBroadcast()`/`vm.stopBroadcast()`, run with `forge script` + `--broadcast`
 - Anvil default account #0 key: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
+- SE2 frontend lives in `apps/web/` with Next.js 15, React 19, Wagmi 2.19.5, Viem 2.47.4
+- ox/erc8021 `Attribution.toDataSuffix({ codes: ['code'] })` generates ERC-8021 suffix (note: `codes` is plural array)
+- SE2 uses `~~/*` path alias for root imports, DaisyUI 5 + Tailwind 4 for styling
+- Contract ABI goes in `apps/web/contracts/deployedContracts.ts` keyed by chainId
+- SE2 scaffold hooks: `useScaffoldReadContract`, `useScaffoldWriteContract`, `useScaffoldEventHistory`
+- Use `--legacy-peer-deps` for npm install (React 19 peer dep conflicts with some packages)
+- Nav links configured in `apps/web/components/Header.tsx` `menuLinks` array
 ---
 
 ## 2026-03-17 - US-001
@@ -44,4 +51,34 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - Forge scripts use `vm.startBroadcast()` / `vm.stopBroadcast()` for on-chain transactions
   - Deploy cost is ~2.3M gas, mint is ~150K gas median
   - Forge linter notes about plain imports and asm-keccak256 are informational only (as noted in patterns)
+---
+
+## 2026-03-17 - US-003
+- Scaffolded Scaffold-ETH 2 frontend in `apps/web/` using create-eth@2.0.10 with Foundry option
+- Configured Wagmi with ox/erc8021 dataSuffix for ERC-8021 builder code attribution
+- Set up CodesRegistry contract ABI in deployedContracts.ts for mainnet (chain 1) and Sepolia (chain 11155111)
+- Configured scaffold.config.ts: mainnet + Sepolia targets, llamarpc.com RPC override, burner wallet disabled
+- Updated wagmiConnectors with MetaMask, WalletConnect, Coinbase Wallet, Ledger, Rainbow, Safe
+- Customized Header with nav links for all planned pages (Claim, My Codes, Explorer, Verify, Analytics, Docs)
+- Updated home page with app branding and CTA cards
+- Updated Footer with project branding
+- TypeScript strict passes, ESLint clean, Next.js build succeeds
+- Files changed:
+  - `apps/web/` (new - entire SE2 frontend scaffold)
+  - `apps/web/scaffold.config.ts` (configured for mainnet+sepolia)
+  - `apps/web/services/web3/wagmiConfig.tsx` (added dataSuffix from ox/erc8021)
+  - `apps/web/services/web3/wagmiConnectors.tsx` (removed burner wallet, added Coinbase)
+  - `apps/web/contracts/deployedContracts.ts` (CodesRegistry ABI for both chains)
+  - `apps/web/components/Header.tsx` (app branding + nav links)
+  - `apps/web/components/Footer.tsx` (simplified footer)
+  - `apps/web/app/page.tsx` (landing page with CTAs)
+  - `apps/web/app/layout.tsx` (updated metadata)
+  - `.gitignore` (added apps/web/ entries)
+- **Learnings for future iterations:**
+  - ox/erc8021 API uses `codes` (plural array): `Attribution.toDataSuffix({ codes: ['mycode'] })`
+  - ox version must be ^0.14.x for erc8021 support (earlier versions don't have it)
+  - viem 2.45+ has `dataSuffix` on wallet client config, but wagmi 2.x doesn't forward it to createConfig - export it separately for per-tx use
+  - SE2 creates-eth@2.0.10 uses yarn by default; switched to npm with `--legacy-peer-deps` for React 19 compat
+  - SE2 has a pre-existing TS issue in useScaffoldEventHistory.ts with deployedOnBlock type - needs cast to fix
+  - burner-connector package removed; RevealBurnerPKModal stubbed as no-op
 ---

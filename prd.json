@@ -86,7 +86,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-003 - Scaffold-ETH 2 frontend with wallet connection and dataSuffix config'. No co-author lines."
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Key insight from Base docs: dataSuffix is a first-class Wagmi/Viem config option. Set it once in createConfig and ALL transactions auto-include the builder code. No per-tx code needed."
     },
     {

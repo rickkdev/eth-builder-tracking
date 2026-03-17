@@ -7,6 +7,12 @@ contracts/broadcast/
 .env
 .env.*
 
+# Frontend
+apps/web/node_modules/
+apps/web/.next/
+apps/web/.vercel/
+
 # OS
 .DS_Store
 .last-branch
+node_modules/
