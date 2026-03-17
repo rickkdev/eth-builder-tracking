@@ -1,0 +1,12 @@
+# Foundry
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+.last-branch

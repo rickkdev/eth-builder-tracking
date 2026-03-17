@@ -2,13 +2,14 @@
   "project": "EthBuilderCodes",
   "branchName": "ralph/eth-builder-codes",
   "description": "Ethereum Mainnet Builder Codes - Replicating Base's ERC-8021 attribution system for Ethereum L1. Purely for tracking and analytics. Uses ox/erc8021 library (same as Base), an ERC-721 registry contract, Scaffold-ETH 2 frontend with native dataSuffix support (viem 2.45.0+), and Dune dashboards for analytics. No subgraph - direct RPC reads + Dune API for all data.",
+  "commitRule": "After completing each user story, commit ALL changes with message: 'feat: [Story ID] - [Story Title]'. Do NOT include any co-author or attribution lines - only the commit message content itself. Commit after every story, no exceptions.",
   "techStack": {
     "contracts": "Foundry + OpenZeppelin ERC-721",
     "erc8021": "ox/erc8021 (Attribution.toDataSuffix) - same library Base uses, DO NOT build custom",
     "frontend": "Scaffold-ETH 2 (Next.js 14 + Wagmi + Viem 2.45.0+ + RainbowKit + Tailwind)",
     "dataLayer": "Direct RPC reads (getLogs for events, Multicall3 for batch reads) + Dune API for analytics. No subgraph.",
     "analytics": "Dune Analytics (DuneSQL/Trino) + Dune API for dashboard integration",
-    "testing": "Foundry (unit + fuzz + invariant + fork) + Vitest for TypeScript",
+    "testing": "Foundry unit tests + Vitest for TypeScript",
     "deployment": "Foundry scripts + Anvil local + Sepolia testnet + Mainnet",
     "rpc": "https://eth.llamarpc.com (free) or Alchemy (production)"
   },
@@ -20,7 +21,8 @@
     "scaffoldEth2": "npx create-eth@latest gives you auto-generated TS types from contracts, built-in hooks, and IPFS deployment",
     "noSubgraph": "No Graph subgraph needed. Use viem getLogs for CodeMinted events (fine for <10K codes) + Multicall3 for batch reads + Dune API for analytics. Keeps infra simple.",
     "singleContract": "Only 1 contract needed (CodesRegistry). Purely for tracking - no payouts, no rewards, no money movement.",
-    "noPayout": "No payout address concept. The registry maps codes to owners (via ERC-721 ownership). That's it."
+    "noPayout": "No payout address concept. The registry maps codes to owners (via ERC-721 ownership). That's it.",
+    "baseAudited": "Contract pattern is already audited by Base. No need for fuzz/invariant tests - basic unit tests are sufficient."
   },
   "userStories": [
     {
@@ -39,54 +41,35 @@
         "Event: CodeMinted(uint256 indexed tokenId, string code, address indexed owner)",
         "Indexed topics on events for efficient log filtering",
         "Input validation: code length bounds (1-32), ASCII-only enforcement",
-        "forge build succeeds, forge test passes with unit tests covering: mint, duplicate rejection, ownership checks, max length code, empty code revert, invalid chars revert, transfer updates ownership"
+        "forge build succeeds, forge test passes with unit tests covering: mint, duplicate rejection, ownership checks, max length code, empty code revert, invalid chars revert, transfer updates ownership",
+        "COMMIT: git add all changes and commit with message 'feat: US-001 - Foundry project setup and ERC-721 registry contract'. No co-author lines."
       ],
       "priority": 1,
-      "passes": false,
-      "notes": "Only 1 contract needed - purely for tracking. Use string-to-tokenId mapping for O(1) lookup. Ownership is just ERC-721 ownerOf. Gas cost for mint should be ~150K gas (~$0.03 at current rates)."
+      "passes": true,
+      "notes": "Only 1 contract needed - purely for tracking. Use string-to-tokenId mapping for O(1) lookup. Ownership is just ERC-721 ownerOf. Gas cost for mint should be ~150K gas (~$0.03 at current rates). Contract pattern already audited by Base."
     },
     {
       "id": "US-002",
-      "title": "Fuzz and invariant tests for registry contract",
-      "description": "As a developer, I need comprehensive fuzz and invariant tests for the CodesRegistry to catch edge cases that unit tests miss. Ethskills: 'forge test finds the bugs you thought of. Fuzzing finds the ones you didn't.'",
+      "title": "Local Anvil deployment and gas report",
+      "description": "As a developer, I need Foundry deployment scripts that work against a local Anvil instance (no real wallet needed), with a post-deploy smoke test and gas report. Production deployment (Sepolia/mainnet) is documented in a guide but NOT executed.",
       "acceptanceCriteria": [
-        "Fuzz test: testFuzz_MintWithRandomCode(string calldata code) - bound to valid chars, verify mint succeeds or reverts correctly",
-        "Fuzz test: testFuzz_DuplicateCodeAlwaysReverts(string calldata code) - mint twice, second always reverts",
-        "Fuzz test: testFuzz_TransferUpdatesOwnership(address newOwner) - after transfer, ownerOfCode returns new owner",
-        "Invariant test: total supply equals number of unique codes in mapping",
-        "Invariant test: every minted tokenId has a non-empty code string",
-        "Invariant test: every code with codeExists==true has a non-zero owner",
-        "Use bound() instead of vm.assume() for input shaping",
-        "Handler contract for invariant tests that exercises mint and transfer",
-        "All tests pass with forge test --fuzz-runs 10000",
-        "Gas snapshot generated with forge snapshot"
+        "Foundry script Deploy.s.sol deploys CodesRegistry and logs contract address",
+        "Script deploys to local Anvil using Anvil's default test accounts (no real private key needed)",
+        "Anvil startup command documented: anvil (local) or anvil --fork-url https://eth.llamarpc.com (fork mode)",
+        "Post-deploy smoke test script: mints a code, queries ownerOfCode, verifies correctness - all on local Anvil",
+        ".gitignore includes .env, .env.*, broadcast/, cache/, out/",
+        "Gas report: forge test --gas-report shows mint costs ~150K gas",
+        "All forge tests still pass",
+        "README in contracts/ with: (1) Local Anvil deploy instructions (run now), (2) Production guide section covering: how to deploy to Sepolia/mainnet when ready, .env setup for RPC_URL + PRIVATE_KEY + ETHERSCAN_API_KEY, forge verify-contract for Etherscan, gas settings (maxFeePerGas: 1-2 gwei)",
+        "Production guide is documentation only - do NOT attempt real deployment or require a funded wallet",
+        "COMMIT: git add all changes and commit with message 'feat: US-002 - Local Anvil deployment and gas report'. No co-author lines."
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Ethskills testing guide: 'Testing trivial functions is worthless. Focus on edge cases, failure modes, and invariants.' The registry handles arbitrary user string input - perfect fuzz target."
+      "notes": "All deployment runs locally on Anvil with test accounts. No real wallet or ETH needed. Production deploy (Sepolia/mainnet) is a future manual step - just document how."
     },
     {
       "id": "US-003",
-      "title": "Deployment scripts, Anvil verification, and gas report",
-      "description": "As a developer, I need Foundry deployment scripts with post-deploy smoke tests on local Anvil, gas reporting, and Sepolia config.",
-      "acceptanceCriteria": [
-        "Foundry script Deploy.s.sol deploys CodesRegistry and logs contract address",
-        "Script works against local Anvil: anvil --fork-url https://eth.llamarpc.com",
-        "Post-deploy smoke test script: mints a code, queries ownerOfCode, verifies correctness",
-        "Deployment config via .env: RPC_URL, PRIVATE_KEY, ETHERSCAN_API_KEY",
-        ".env.example file with placeholder values (no real keys)",
-        ".gitignore includes .env, .env.*, broadcast/, cache/, out/",
-        "Gas report: forge test --gas-report shows mint costs ~150K gas",
-        "forge verify-contract command documented for Etherscan verification",
-        "All forge tests still pass",
-        "README in contracts/ with: local Anvil deploy, Sepolia deploy, mainnet deploy instructions"
-      ],
-      "priority": 3,
-      "passes": false,
-      "notes": "Ethskills gas guide: mainnet deploy ~$0.50 at 0.1 gwei. Use maxFeePerGas: 1-2 gwei, maxPriorityFeePerGas: 0.01-0.1 gwei for 2026 conditions. Consider CREATE2 for deterministic address."
-    },
-    {
-      "id": "US-004",
       "title": "Scaffold-ETH 2 frontend with wallet connection and dataSuffix config",
       "description": "As a user, I need a web frontend to connect my wallet and interact with builder codes. Use Scaffold-ETH 2 for auto-generated contract types and built-in hooks. Configure Wagmi with native dataSuffix support (viem 2.45.0+).",
       "acceptanceCriteria": [
@@ -99,14 +82,15 @@
         "Tailwind CSS responsive layout",
         "Per-button loading states on all async operations (ethskills: 'blockchains take 5-12 seconds')",
         "npm install ox viem@^2.45.0 wagmi - verify dataSuffix support",
-        "TypeScript strict mode, eslint passes, dev server runs clean"
+        "TypeScript strict mode, eslint passes, dev server runs clean",
+        "COMMIT: git add all changes and commit with message 'feat: US-003 - Scaffold-ETH 2 frontend with wallet connection and dataSuffix config'. No co-author lines."
       ],
-      "priority": 4,
+      "priority": 3,
       "passes": false,
       "notes": "Key insight from Base docs: dataSuffix is a first-class Wagmi/Viem config option. Set it once in createConfig and ALL transactions auto-include the builder code. No per-tx code needed."
     },
     {
-      "id": "US-005",
+      "id": "US-004",
       "title": "Code claiming flow - mint UI with real-time validation",
       "description": "As a builder, I want to claim a unique code by entering it, seeing real-time availability, and minting the ERC-721 NFT to my connected wallet.",
       "acceptanceCriteria": [
@@ -119,14 +103,15 @@
         "Transaction lifecycle: pending spinner → confirming → confirmed with Etherscan link",
         "Error handling: wallet rejection, insufficient funds, code taken (with clear user messages)",
         "Success state: shows minted code, token ID, owner address, and 'View My Codes' link",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-004 - Code claiming flow - mint UI with real-time validation'. No co-author lines."
       ],
-      "priority": 5,
+      "priority": 4,
       "passes": false,
       "notes": "Core UX flow. Ethskills frontend: 'Display loading states on all async operations.' No payout address field needed - NFT ownership IS the identity."
     },
     {
-      "id": "US-006",
+      "id": "US-005",
       "title": "My codes dashboard with Multicall3 batch reads",
       "description": "As a builder, I want to see all my claimed codes and their details. Use Multicall3 for efficient batch contract reads.",
       "acceptanceCriteria": [
@@ -136,14 +121,15 @@
         "Each code card: code string, token ID, mint block timestamp",
         "Loading skeleton states, empty state ('No codes yet - claim your first!')",
         "Responsive grid layout",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-005 - My codes dashboard with Multicall3 batch reads'. No co-author lines."
       ],
-      "priority": 6,
+      "priority": 5,
       "passes": false,
       "notes": "Use viem getLogs to fetch Transfer events + client.multicall for batch reads. No subgraph needed - direct RPC is fine for per-user queries."
     },
     {
-      "id": "US-007",
+      "id": "US-006",
       "title": "Transaction verification tool",
       "description": "As anyone, I want to paste a transaction hash and check if it contains an ERC-8021 builder code suffix, see which code it is, and who owns it.",
       "acceptanceCriteria": [
@@ -155,35 +141,39 @@
         "If not found: clear 'No builder code found' message",
         "Link to Etherscan for the transaction",
         "Handle: invalid hash, tx not found, network errors",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-006 - Transaction verification tool'. No co-author lines."
       ],
-      "priority": 7,
+      "priority": 6,
       "passes": false,
       "notes": "Based on Base's builder-code-checker (builder-code-checker.vercel.app). Uses ox/erc8021 for decoding - same library, just pointing at mainnet."
     },
     {
-      "id": "US-008",
-      "title": "Developer integration docs with ox/erc8021 examples",
-      "description": "As a dApp developer, I need docs showing how to integrate builder code attribution into my app. Key insight: with viem 2.45.0+, it's a ONE-LINE config change.",
+      "id": "US-007",
+      "title": "Documentation page - full system explainer and developer integration guide",
+      "description": "As a visitor or developer, I need a comprehensive /docs page that explains what Ethereum Builder Codes are, how the entire system works end-to-end, the ERC-8021 standard, and how to integrate attribution into any dApp.",
       "acceptanceCriteria": [
-        "Docs page at /docs with step-by-step integration guide",
-        "Quick start: npm install ox wagmi viem + one-line dataSuffix in createConfig (copy from Base docs pattern)",
-        "Wagmi example: Attribution.toDataSuffix({ codes: ['YOUR-CODE'] }) in createConfig - auto-tags ALL transactions",
-        "Viem example: same dataSuffix in createWalletClient config",
-        "Per-transaction example for legacy setups: dataSuffix in sendCalls capabilities",
-        "EOA wallet note: works natively with all EOA wallets",
-        "Smart wallet note: ERC-5792 DataSuffixCapability, Privy/Turnkey already support it",
-        "Interactive suffix generator: enter code → shows hex output from Attribution.toDataSuffix",
-        "Visual byte diagram of ERC-8021 format: [schema 0x00][length][ASCII bytes][0x8021 repeating]",
+        "Docs page at /docs with sidebar navigation between sections",
+        "Section 1 - What are Builder Codes: explains the concept, why attribution matters, how Base pioneered it, and how this brings it to mainnet",
+        "Section 2 - How it works: end-to-end flow diagram (Claim code → Integrate suffix → Transactions tagged → Dune tracks everything)",
+        "Section 3 - ERC-8021 standard: visual byte format diagram [schema 0x00][length byte][ASCII code bytes][0x8021 repeating marker], explanation that smart contracts ignore trailing calldata, gas cost per suffix (< $0.001)",
+        "Section 4 - Registry contract: what the ERC-721 does, mint/ownerOfCode/codeExists functions, contract address, link to Etherscan",
+        "Section 5 - Developer integration guide: quick start (npm install ox wagmi viem), one-line Wagmi config with Attribution.toDataSuffix, Viem example, per-transaction legacy example",
+        "Section 6 - Wallet compatibility: EOA wallets work natively, smart wallets via ERC-5792 DataSuffixCapability, Privy/Turnkey supported",
+        "Section 7 - Analytics and tracking: how Dune parses suffixes, link to public dashboard, how to build your own queries",
+        "Section 8 - FAQ: cost to mint, cost per tagged tx, can codes be transferred, what happens if suffix is on unsupported contract, L2 compatibility",
+        "Interactive suffix generator tool: enter your code → shows the hex suffix from Attribution.toDataSuffix",
         "Copy-to-clipboard on all code snippets",
-        "TypeScript strict, lint passes"
+        "Clean typography, responsive, linked from landing page and nav",
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-007 - Documentation page - full system explainer and developer integration guide'. No co-author lines."
       ],
-      "priority": 8,
+      "priority": 7,
       "passes": false,
-      "notes": "THE key selling point: it's literally a one-line config change for any Wagmi/Viem app. Base docs show this clearly. Reproduce that simplicity."
+      "notes": "This is both the 'learn about it' page AND the 'integrate it' page. Covers the full picture for non-technical visitors AND gives developers copy-paste code. Key selling point: one-line config change for any Wagmi/Viem app."
     },
     {
-      "id": "US-009",
+      "id": "US-008",
       "title": "Dune Analytics SQL queries for mainnet attribution",
       "description": "As an analyst, I need ready-to-use DuneSQL queries that parse ERC-8021 suffixes from ethereum.transactions and produce attribution metrics.",
       "acceptanceCriteria": [
@@ -196,14 +186,15 @@
         "Query 6: All registered codes with owners (replaces subgraph for explorer data)",
         "All queries in DuneSQL/Trino syntax (not Spark SQL)",
         "Inline comments explaining suffix parsing logic",
-        "README: how to create these dashboards on dune.com, how to use Dune API (api.dune.com) to fetch results"
+        "README: how to create these dashboards on dune.com, how to use Dune API (api.dune.com) to fetch results",
+        "COMMIT: git add all changes and commit with message 'feat: US-008 - Dune Analytics SQL queries for mainnet attribution'. No co-author lines."
       ],
-      "priority": 9,
+      "priority": 8,
       "passes": false,
       "notes": "Dune handles both analytics AND registry browsing. Query 6 provides the all-codes list that would have come from a subgraph. Dune API serves it to the frontend."
     },
     {
-      "id": "US-010",
+      "id": "US-009",
       "title": "Public analytics dashboard with Dune API integration",
       "description": "As a community member, I want a public analytics page showing live builder code tracking metrics with data from Dune API.",
       "acceptanceCriteria": [
@@ -218,14 +209,15 @@
         "Graceful fallback to cached/mock data when Dune API is unavailable",
         "Each code row links to detail view",
         "Responsive, mobile-friendly",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-009 - Public analytics dashboard with Dune API integration'. No co-author lines."
       ],
-      "priority": 10,
+      "priority": 9,
       "passes": false,
       "notes": "Start with mock data, design for Dune API swap. Cache Dune results (refresh every 5-15 min), don't call on every page load."
     },
     {
-      "id": "US-011",
+      "id": "US-010",
       "title": "Off-chain metadata with EIP-712 signature verification",
       "description": "As a builder, I want to add a display name, website, and logo to my code profile. Only the code owner can update, verified via EIP-712 signed message.",
       "acceptanceCriteria": [
@@ -238,14 +230,15 @@
         "Logo upload: max 500KB, image/* MIME types only, stored locally or external URL",
         "Input validation: URL format, string lengths, no script injection",
         "Metadata displayed on code cards in /my-codes, /explore, /analytics",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-010 - Off-chain metadata with EIP-712 signature verification'. No co-author lines."
       ],
-      "priority": 11,
+      "priority": 10,
       "passes": false,
       "notes": "Ethskills security: 'EIP-712 enables structured data signing with domain separation and replay protection.' Ethskills ship: 'User profiles stay offchain.'"
     },
     {
-      "id": "US-012",
+      "id": "US-011",
       "title": "Registry explorer with RPC event logs and Dune data",
       "description": "As anyone, I want to browse all minted builder codes with search and sorting, using direct RPC getLogs for registry data and Dune API for attribution stats.",
       "acceptanceCriteria": [
@@ -257,14 +250,15 @@
         "Each card: code name, owner (with ENS resolution via viem getEnsName if available), metadata from API",
         "Click-through to code detail page with Dune-powered attribution stats",
         "Responsive design",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-011 - Registry explorer with RPC event logs and Dune data'. No co-author lines."
       ],
-      "priority": 12,
+      "priority": 11,
       "passes": false,
       "notes": "getLogs on CodeMinted events is fine for <10K codes. Cache results server-side and refresh periodically. For attribution stats on detail pages, use Dune API."
     },
     {
-      "id": "US-013",
+      "id": "US-012",
       "title": "End-to-end integration test on Anvil",
       "description": "As a developer, I need an E2E test that deploys the registry, mints codes, sends attributed transactions with ox/erc8021 suffixes, and verifies the complete tracking flow.",
       "acceptanceCriteria": [
@@ -278,14 +272,15 @@
         "Verifies ownerOfCode lookups return correct owners",
         "Tests code transfer (ERC-721 transfer) and verifies new owner via ownerOfCode",
         "All assertions pass, clean Anvil teardown",
-        "Runnable via: npm run test:e2e"
+        "Runnable via: npm run test:e2e",
+        "COMMIT: git add all changes and commit with message 'feat: US-012 - End-to-end integration test on Anvil'. No co-author lines."
       ],
-      "priority": 13,
+      "priority": 12,
       "passes": false,
       "notes": "Validates the entire tracking system before mainnet."
     },
     {
-      "id": "US-014",
+      "id": "US-013",
       "title": "Landing page with ecosystem positioning",
       "description": "As a visitor, I want a clear landing page explaining Ethereum Builder Codes, how they work, and why they matter - positioned as 'what Base did, now for all of Ethereum.'",
       "acceptanceCriteria": [
@@ -299,14 +294,15 @@
         "FAQ: cost to mint (~$0.03), wallet compatibility, L2 support, contract verification",
         "Footer: GitHub, Dune dashboard link, contract on Etherscan, ERC-8021 spec",
         "Responsive, fast load, no heavy images",
-        "TypeScript strict, lint passes"
+        "TypeScript strict, lint passes",
+        "COMMIT: git add all changes and commit with message 'feat: US-013 - Landing page with ecosystem positioning'. No co-author lines."
       ],
-      "priority": 14,
+      "priority": 13,
       "passes": false,
       "notes": "Keep it concise and action-oriented."
     },
     {
-      "id": "US-015",
+      "id": "US-014",
       "title": "Security audit checklist and Slither static analysis",
       "description": "As a developer preparing for mainnet, I need to run Slither static analysis on the registry contract and verify the ethskills security checklist passes.",
       "acceptanceCriteria": [
@@ -318,9 +314,10 @@
         "Verify: string input bounded (1-32 chars, ASCII only)",
         "Document: gas costs for all public functions via forge test --gas-report",
         "Document: post-deploy checklist (verify on Etherscan)",
-        "All forge tests pass, slither clean"
+        "All forge tests pass, slither clean",
+        "COMMIT: git add all changes and commit with message 'feat: US-014 - Security audit checklist and Slither static analysis'. No co-author lines."
       ],
-      "priority": 15,
+      "priority": 14,
       "passes": false,
       "notes": "Single contract with no money handling keeps attack surface minimal."
     }

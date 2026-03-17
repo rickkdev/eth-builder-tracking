@@ -1,3 +1,28 @@
 # Ralph Progress Log
 Started: Tue Mar 17 18:02:55 CET 2026
 ---
+
+## Codebase Patterns
+- Foundry project lives in `contracts/` with OpenZeppelin v5.6.1 and forge-std v1.15.0
+- Remappings: `@openzeppelin/contracts/` maps to `lib/openzeppelin-contracts/contracts/`
+- CodesRegistry uses custom errors (not require strings) for gas efficiency
+- Token IDs are sequential starting from 0 via `_nextTokenId++`
+- Code lookups use `keccak256(bytes(code))` as mapping key for O(1) access
+- Forge linter notes about plain imports and asm-keccak256 are informational only, not errors
+---
+
+## 2026-03-17 - US-001
+- Implemented CodesRegistry ERC-721 contract with unique ASCII code minting
+- Foundry project initialized with OpenZeppelin, remappings configured
+- 16 unit tests covering: mint, events, duplicate rejection, empty/too-long/invalid chars revert, max length, transfer updates ownership, code lookups, nonexistent token/code reverts
+- Files changed:
+  - `contracts/src/CodesRegistry.sol` (new)
+  - `contracts/test/CodesRegistry.t.sol` (new)
+  - `contracts/remappings.txt` (new)
+  - Removed default Counter.sol files from forge init
+- **Learnings for future iterations:**
+  - OpenZeppelin v5 uses `_requireOwned(tokenId)` instead of `_exists(tokenId)` for token existence checks
+  - `ERC721._mint` no longer has a safe variant requirement in OZ v5 - it just mints directly
+  - Forge init creates Counter.sol scaffold files that need to be removed
+  - Mint gas cost is ~148K gas (within expected ~150K range)
+---
