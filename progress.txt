@@ -9,6 +9,8 @@ Started: Tue Mar 17 18:02:55 CET 2026
 - Token IDs are sequential starting from 0 via `_nextTokenId++`
 - Code lookups use `keccak256(bytes(code))` as mapping key for O(1) access
 - Forge linter notes about plain imports and asm-keccak256 are informational only, not errors
+- Foundry scripts go in `contracts/script/`, use `vm.startBroadcast()`/`vm.stopBroadcast()`, run with `forge script` + `--broadcast`
+- Anvil default account #0 key: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
 ---
 
 ## 2026-03-17 - US-001
@@ -25,4 +27,21 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - `ERC721._mint` no longer has a safe variant requirement in OZ v5 - it just mints directly
   - Forge init creates Counter.sol scaffold files that need to be removed
   - Mint gas cost is ~148K gas (within expected ~150K range)
+---
+
+## 2026-03-17 - US-002
+- Implemented Deploy.s.sol and SmokeTest.s.sol Foundry scripts for local Anvil deployment
+- Deploy script logs contract address; SmokeTest deploys, mints a code, and verifies ownership
+- Wrote comprehensive contracts/README.md with local deploy instructions, gas report table, and production deployment guide
+- Verified both scripts run successfully on local Anvil
+- .gitignore already covers .env, broadcast/, cache/, out/
+- Files changed:
+  - `contracts/script/Deploy.s.sol` (new)
+  - `contracts/script/SmokeTest.s.sol` (new)
+  - `contracts/README.md` (rewritten)
+- **Learnings for future iterations:**
+  - Anvil default account #0 private key: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
+  - Forge scripts use `vm.startBroadcast()` / `vm.stopBroadcast()` for on-chain transactions
+  - Deploy cost is ~2.3M gas, mint is ~150K gas median
+  - Forge linter notes about plain imports and asm-keccak256 are informational only (as noted in patterns)
 ---

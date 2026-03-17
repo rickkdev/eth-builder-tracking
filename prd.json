@@ -65,7 +65,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-002 - Local Anvil deployment and gas report'. No co-author lines."
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "All deployment runs locally on Anvil with test accounts. No real wallet or ETH needed. Production deploy (Sepolia/mainnet) is a future manual step - just document how."
     },
     {
