@@ -36,12 +36,6 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "contracts/src",
-    "contracts/script",
-    "contracts/test",
-    "contracts/lib",
-    "test/e2e",
-    "analytics"
+    "node_modules"
   ]
 }

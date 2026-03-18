@@ -25,4 +25,4 @@ if (isIpfs) {
 
 
 
-export default nextConfig;
+module.exports = nextConfig;

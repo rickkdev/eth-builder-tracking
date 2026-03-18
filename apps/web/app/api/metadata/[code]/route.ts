@@ -17,7 +17,7 @@ type CodeMetadata = {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const DATA_DIR = join(process.cwd(), "data", "metadata");
+const DATA_DIR = join(process.cwd(), "..", "..", "data", "metadata");
 
 const TAG_REGISTRY_ADDRESS = "0x0000000000000000000000000000000000000000" as const;
 
