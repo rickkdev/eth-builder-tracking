@@ -284,3 +284,19 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - DaisyUI `collapse collapse-arrow` with radio inputs creates accordion FAQ
   - Use `&apos;` for apostrophes in JSX to avoid ESLint warnings
 ---
+
+## 2026-03-18 - US-014
+- Ran Slither static analysis: zero findings on CodesRegistry.sol (all 46 findings are OpenZeppelin library internals)
+- Created comprehensive SECURITY_AUDIT.md with:
+  - Slither results summary
+  - Security checklist: access control, CEI pattern, events, input validation, no hardcoded addresses, gas efficiency, no money handling
+  - Gas report table for all public functions
+  - Post-deploy checklist (Etherscan verification, frontend update, monitoring)
+- Verified all forge tests pass (16/16)
+- Files changed:
+  - `contracts/SECURITY_AUDIT.md` (new)
+- **Learnings for future iterations:**
+  - Slither install: `pip3 install slither-analyzer`, run with `python3 -m slither .`
+  - Slither findings on OpenZeppelin are all informational/known patterns — filter by contract file to see only your findings
+  - `forge test --gas-report` generates gas table for all tested functions
+---
