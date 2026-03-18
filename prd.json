@@ -125,7 +125,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-005 - My codes dashboard with Multicall3 batch reads'. No co-author lines."
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Use viem getLogs to fetch Transfer events + client.multicall for batch reads. No subgraph needed - direct RPC is fine for per-user queries."
     },
     {
@@ -145,7 +145,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-006 - Transaction verification tool'. No co-author lines."
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Based on Base's builder-code-checker (builder-code-checker.vercel.app). Uses ox/erc8021 for decoding - same library, just pointing at mainnet."
     },
     {
