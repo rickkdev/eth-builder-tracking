@@ -16,7 +16,7 @@ export const Footer = () => {
           <div className="flex flex-col md:flex-row gap-2 pointer-events-auto">
             {nativeCurrencyPrice > 0 && (
               <div>
-                <div className="btn btn-primary btn-sm font-normal gap-1 cursor-auto">
+                <div className="btn btn-sm font-normal gap-1 cursor-auto glass-card border-base-content/10 text-base-content/50 text-xs font-mono">
                   <CurrencyDollarIcon className="h-4 w-4" />
                   <span>{nativeCurrencyPrice.toFixed(2)}</span>
                 </div>
@@ -28,18 +28,12 @@ export const Footer = () => {
       </div>
       <div className="w-full">
         <ul className="menu menu-horizontal w-full">
-          <div className="flex justify-center items-center gap-2 text-sm w-full">
-            <div className="text-center">
-              <span>BuilderTag</span>
-            </div>
-            <span>·</span>
-            <div className="text-center">
-              <span>ERC-8021 Attribution</span>
-            </div>
-            <span>·</span>
-            <div className="text-center">
-              <span>Built with Scaffold-ETH 2</span>
-            </div>
+          <div className="flex justify-center items-center gap-3 text-xs w-full text-base-content/25 font-mono">
+            <span>BuilderTag</span>
+            <span className="text-base-content/10">·</span>
+            <span>ERC-8021</span>
+            <span className="text-base-content/10">·</span>
+            <span>Scaffold-ETH 2</span>
           </div>
         </ul>
       </div>
