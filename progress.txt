@@ -140,3 +140,20 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - viem `isHash()` validates tx hash format (useful for input validation)
   - useScaffoldReadContract with `undefined` arg disables the query — use conditional value to trigger reads only when needed
 ---
+
+## 2026-03-18 - US-007
+- Implemented comprehensive documentation page at /docs with 8 sections and sidebar navigation
+- Sections: What are Builder Codes, How It Works, ERC-8021 Standard, Registry Contract, Developer Integration, Wallet Compatibility, Analytics & Tracking, FAQ
+- Interactive suffix generator tool using ox/erc8021 Attribution.toDataSuffix
+- Copy-to-clipboard on all code snippets
+- Responsive: desktop sidebar nav, mobile horizontal scroll nav
+- DaisyUI collapse components for FAQ accordion
+- Code examples for Wagmi config, Viem client, and per-transaction integration
+- Visual byte format diagram for ERC-8021 suffix structure
+- Files changed:
+  - `apps/web/app/docs/page.tsx` (new)
+- **Learnings for future iterations:**
+  - DaisyUI collapse-arrow with radio inputs creates accordion behavior (only one open at a time)
+  - Remove unused function parameters to pass ESLint strict mode
+  - `Attribution.toDataSuffix({ codes: ['code'] })` works client-side for interactive tools
+---
