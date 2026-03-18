@@ -213,7 +213,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-009 - Public analytics dashboard with Dune API integration'. No co-author lines."
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Start with mock data, design for Dune API swap. Cache Dune results (refresh every 5-15 min), don't call on every page load."
     },
     {

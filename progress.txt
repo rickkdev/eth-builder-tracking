@@ -182,3 +182,26 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - ERC-721 Transfer event topic0: `0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`
   - Query 1 should be saved first in Dune as other queries reference it via `query_XXXXXX`
 ---
+
+## 2026-03-18 - US-009
+- Implemented public analytics dashboard at /analytics with Dune API integration
+- Summary stats cards: total codes minted, total attributed txs, total fees tracked
+- Leaderboard table: top codes by volume with time range filter (7D, 28D, 90D, All)
+- Volume trend area chart using recharts with responsive container
+- Data fetching layer in services/dune/ with interface: fetchStats(), fetchLeaderboard(), fetchVolumeTrend()
+- Mock data implementation matching Dune API response shapes
+- Dune API integration via NEXT_PUBLIC_DUNE_API_KEY env var with 10-minute client-side cache
+- Graceful fallback to mock data when Dune API unavailable
+- Each code row links to /explore?code=X detail view
+- Responsive, mobile-friendly (hides some columns on small screens)
+- Loading skeletons, error state with retry
+- Files changed:
+  - `apps/web/services/dune/index.ts` (new - data fetching layer)
+  - `apps/web/app/analytics/page.tsx` (new - analytics dashboard)
+- **Learnings for future iterations:**
+  - recharts Tooltip `formatter` prop expects `value` param typed as `ValueType | undefined`, not `number` — use `Number(value ?? 0)` for safe formatting
+  - DaisyUI `join` component creates button groups for time range selectors
+  - oklch CSS variables from DaisyUI (e.g., `oklch(var(--p))`) work in recharts stroke/fill props
+  - Dune API endpoint: `api.dune.com/api/v1/query/{id}/results` with `X-Dune-API-Key` header
+  - Environment variables for Dune: NEXT_PUBLIC_DUNE_API_KEY, NEXT_PUBLIC_DUNE_QUERY_STATS, NEXT_PUBLIC_DUNE_QUERY_LEADERBOARD, NEXT_PUBLIC_DUNE_QUERY_VOLUME_TREND
+---
