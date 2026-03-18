@@ -1,68 +1,247 @@
 "use client";
 
 import Link from "next/link";
-import { Address } from "@scaffold-ui/components";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-  const { targetNetwork } = useTargetNetwork();
-
   return (
-    <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Ethereum Builder Codes</span>
-          </h1>
-          <p className="text-center text-lg mt-4 max-w-xl mx-auto">
-            Attribution for Ethereum. Claim a unique builder code, integrate it into your dApp with one line of config,
-            and track every transaction.
+    <div className="flex items-center flex-col grow">
+      {/* Hero */}
+      <div className="w-full bg-gradient-to-b from-base-300 to-base-100 py-20 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4">Attribution for Ethereum.</h1>
+          <p className="text-xl md:text-2xl text-base-content/70 mb-2">Know who built what.</p>
+          <p className="text-lg text-base-content/50 mb-8 max-w-xl mx-auto">
+            Claim a unique builder code, add one line of config, and every transaction from your dApp is attributed to
+            you. Forever.
           </p>
-          {connectedAddress && (
-            <div className="flex justify-center items-center space-x-2 flex-col mt-4">
-              <p className="my-2 font-medium">Connected Address:</p>
-              <Address address={connectedAddress} chain={targetNetwork} />
-            </div>
-          )}
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/claim" className="btn btn-primary btn-lg">
+              Claim Your Code
+            </Link>
+            <Link href="/docs" className="btn btn-outline btn-lg">
+              Read the Docs
+            </Link>
+            <Link href="/analytics" className="btn btn-ghost btn-lg">
+              View Leaderboard
+            </Link>
+          </div>
         </div>
+      </div>
 
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <h3 className="text-xl font-bold mb-2">Claim a Code</h3>
-              <p>
-                Mint a unique builder code as an ERC-721 NFT.{" "}
-                <Link href="/claim" passHref className="link">
-                  Get started
-                </Link>
+      {/* How it works */}
+      <div className="w-full py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-primary mb-4">1</div>
+              <h3 className="text-xl font-semibold mb-2">Claim a Code</h3>
+              <p className="text-base-content/60">
+                Mint a unique builder code as an ERC-721 NFT. Your code is your on-chain identity.
               </p>
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <h3 className="text-xl font-bold mb-2">View Analytics</h3>
-              <p>
-                See top builder codes and attribution metrics.{" "}
-                <Link href="/analytics" passHref className="link">
-                  Leaderboard
-                </Link>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-primary mb-4">2</div>
+              <h3 className="text-xl font-semibold mb-2">Add One Line</h3>
+              <p className="text-base-content/60">
+                Configure your Wagmi/Viem app with a single{" "}
+                <code className="font-mono text-sm bg-base-200 px-1 rounded">dataSuffix</code> option. Done.
               </p>
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <h3 className="text-xl font-bold mb-2">Read the Docs</h3>
-              <p>
-                Learn how ERC-8021 attribution works.{" "}
-                <Link href="/docs" passHref className="link">
-                  Documentation
-                </Link>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-primary mb-4">3</div>
+              <h3 className="text-xl font-semibold mb-2">Track Everything</h3>
+              <p className="text-base-content/60">
+                Every transaction is tagged. View volume, fees, and users on the analytics dashboard.
               </p>
             </div>
           </div>
         </div>
       </div>
-    </>
+
+      {/* One line pitch */}
+      <div className="w-full bg-base-200 py-12 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-2xl font-semibold mb-4">One line of code. Every transaction attributed.</p>
+          <div className="mockup-code text-left max-w-xl mx-auto">
+            <pre data-prefix="1">
+              <code>{`import { Attribution } from "ox/erc8021";`}</code>
+            </pre>
+            <pre data-prefix="2">
+              <code>{`// In your Wagmi config:`}</code>
+            </pre>
+            <pre data-prefix="3" className="text-primary">
+              <code>{`dataSuffix: Attribution.toDataSuffix({ codes: ["yourcode"] })`}</code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      {/* Benefits */}
+      <div className="w-full py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Why Builder Codes?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="card bg-base-200">
+              <div className="card-body">
+                <h3 className="card-title text-lg">Analytics</h3>
+                <p className="text-base-content/60">
+                  Track transaction count, volume, gas fees, and unique users attributed to your dApp.
+                </p>
+              </div>
+            </div>
+            <div className="card bg-base-200">
+              <div className="card-body">
+                <h3 className="card-title text-lg">Ecosystem Visibility</h3>
+                <p className="text-base-content/60">
+                  Appear on the public leaderboard. Show the community what you&apos;re building.
+                </p>
+              </div>
+            </div>
+            <div className="card bg-base-200">
+              <div className="card-body">
+                <h3 className="card-title text-lg">Zero Overhead</h3>
+                <p className="text-base-content/60">
+                  The suffix adds {"<"} $0.001 per transaction. No smart contract changes needed.
+                </p>
+              </div>
+            </div>
+            <div className="card bg-base-200">
+              <div className="card-body">
+                <h3 className="card-title text-lg">Battle-Tested Standard</h3>
+                <p className="text-base-content/60">
+                  Built on ERC-8021, the same standard powering Base Builder Codes. Audited and proven.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ERC-8021 Technical Section */}
+      <div className="w-full bg-base-200 py-16 px-4">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">ERC-8021 Suffix Format</h2>
+          <p className="text-center text-base-content/60 mb-6">
+            Smart contracts ignore trailing calldata. The suffix is invisible to your contract logic.
+          </p>
+          <div className="overflow-x-auto">
+            <div className="flex gap-1 justify-center items-center font-mono text-sm flex-wrap">
+              <span className="badge badge-primary badge-lg">0x00</span>
+              <span className="text-base-content/40">schema</span>
+              <span className="mx-1">|</span>
+              <span className="badge badge-secondary badge-lg">len</span>
+              <span className="text-base-content/40">byte</span>
+              <span className="mx-1">|</span>
+              <span className="badge badge-accent badge-lg">ASCII code bytes</span>
+              <span className="mx-1">|</span>
+              <span className="badge badge-warning badge-lg">0x8021...8021</span>
+              <span className="text-base-content/40">marker</span>
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 mt-8 text-sm text-base-content/50">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">Mint cost:</span> ~$0.03
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">Per-tx cost:</span> {"<"} $0.001
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">Gas overhead:</span> ~16 gas/byte
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div className="w-full py-16 px-4">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">FAQ</h2>
+          <div className="space-y-2">
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="radio" name="faq" defaultChecked />
+              <div className="collapse-title font-medium">How much does it cost to mint a code?</div>
+              <div className="collapse-content text-base-content/60">
+                <p>
+                  About ~$0.03 at current gas prices (0.1 gwei base fee). The mint transaction uses approximately
+                  150,000 gas.
+                </p>
+              </div>
+            </div>
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="radio" name="faq" />
+              <div className="collapse-title font-medium">Which wallets are compatible?</div>
+              <div className="collapse-content text-base-content/60">
+                <p>
+                  All EOA wallets (MetaMask, Rainbow, Coinbase Wallet, etc.) work natively. Smart wallets support
+                  attribution via ERC-5792 DataSuffixCapability.
+                </p>
+              </div>
+            </div>
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="radio" name="faq" />
+              <div className="collapse-title font-medium">Can codes be transferred?</div>
+              <div className="collapse-content text-base-content/60">
+                <p>
+                  Yes. Builder codes are ERC-721 NFTs. You can transfer ownership using any NFT marketplace or directly
+                  via the contract.
+                </p>
+              </div>
+            </div>
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="radio" name="faq" />
+              <div className="collapse-title font-medium">Does it work on L2s?</div>
+              <div className="collapse-content text-base-content/60">
+                <p>
+                  The ERC-8021 suffix format works on any EVM chain. This registry is deployed on Ethereum mainnet, but
+                  the attribution standard is chain-agnostic. Base already uses it.
+                </p>
+              </div>
+            </div>
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="radio" name="faq" />
+              <div className="collapse-title font-medium">Is the contract verified on Etherscan?</div>
+              <div className="collapse-content text-base-content/60">
+                <p>
+                  Yes, the CodesRegistry contract will be verified on Etherscan after mainnet deployment. The contract
+                  pattern is already audited by Base.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer CTA */}
+      <div className="w-full bg-base-300 py-12 px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="text-lg text-base-content/60 mb-6">What Base built for L2, now for all of Ethereum.</p>
+          <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <a
+              href="https://eips.ethereum.org/EIPS/eip-8021"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link link-hover"
+            >
+              ERC-8021 Spec
+            </a>
+            <span className="text-base-content/30">|</span>
+            <Link href="/docs" className="link link-hover">
+              Documentation
+            </Link>
+            <span className="text-base-content/30">|</span>
+            <Link href="/analytics" className="link link-hover">
+              Dune Dashboard
+            </Link>
+            <span className="text-base-content/30">|</span>
+            <Link href="/explore" className="link link-hover">
+              Registry Explorer
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

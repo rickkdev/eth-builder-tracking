@@ -298,7 +298,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-013 - Landing page with ecosystem positioning'. No co-author lines."
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Keep it concise and action-oriented."
     },
     {

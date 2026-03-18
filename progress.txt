@@ -266,3 +266,21 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - Foundry artifacts at `contracts/out/CodesRegistry.sol/CodesRegistry.json` contain both ABI and bytecode
   - viem `deployContract` + `waitForTransactionReceipt` pattern for programmatic contract deployment
 ---
+
+## 2026-03-18 - US-013
+- Implemented landing page with ecosystem positioning at /
+- Hero: "Attribution for Ethereum. Know who built what." with 3 CTA buttons
+- How it works: 3-step visual (Claim code → Add one line → Track everything)
+- Code snippet: mockup-code showing one-line Wagmi config
+- Benefits: Analytics, Ecosystem Visibility, Zero Overhead, Battle-Tested Standard
+- ERC-8021 technical section: byte format diagram with badge components, gas cost callouts
+- FAQ accordion: mint cost, wallet compatibility, transferability, L2 support, Etherscan verification
+- Footer: links to ERC-8021 spec, docs, dashboard, explorer
+- Responsive, no heavy images, fast load
+- Files changed:
+  - `apps/web/app/page.tsx` (rewritten)
+- **Learnings for future iterations:**
+  - DaisyUI `mockup-code` component creates styled code blocks with line numbers (data-prefix attribute)
+  - DaisyUI `collapse collapse-arrow` with radio inputs creates accordion FAQ
+  - Use `&apos;` for apostrophes in JSX to avoid ESLint warnings
+---
