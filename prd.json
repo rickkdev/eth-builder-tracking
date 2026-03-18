@@ -190,7 +190,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-008 - Dune Analytics SQL queries for mainnet attribution'. No co-author lines."
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Dune handles both analytics AND registry browsing. Query 6 provides the all-codes list that would have come from a subgraph. Dune API serves it to the frontend."
     },
     {

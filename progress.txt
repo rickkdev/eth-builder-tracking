@@ -157,3 +157,28 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - Remove unused function parameters to pass ESLint strict mode
   - `Attribution.toDataSuffix({ codes: ['code'] })` works client-side for interactive tools
 ---
+
+## 2026-03-18 - US-008
+- Created 6 DuneSQL queries in `analytics/dune/` for ERC-8021 attribution analytics
+- Query 1: Parse 0x8021 suffixes from transaction calldata, extract ASCII builder codes
+- Query 2: Join parsed codes with CodesRegistry CodeMinted events for owner lookup
+- Query 3: Daily volume, fees, and unique users per code
+- Query 4: Top 50 codes by 28-day transaction count and volume
+- Query 5: Fee leaderboard ranked by total gas fees generated
+- Query 6: All registered codes with current owners (tracks ERC-721 transfers)
+- Comprehensive README with Dune dashboard setup, API usage, and caching strategy
+- Files changed:
+  - `analytics/dune/01_parse_8021_suffixes.sql` (new)
+  - `analytics/dune/02_codes_with_owners.sql` (new)
+  - `analytics/dune/03_daily_metrics.sql` (new)
+  - `analytics/dune/04_top_codes_28d.sql` (new)
+  - `analytics/dune/05_fee_leaderboard.sql` (new)
+  - `analytics/dune/06_all_registered_codes.sql` (new)
+  - `analytics/dune/README.md` (new)
+- **Learnings for future iterations:**
+  - DuneSQL uses `bytearray_substring()`, `bytearray_to_uint256()`, `from_utf8()` for binary data parsing
+  - ERC-8021 suffix detection: check last 4 bytes for `0x80218021` repeating marker
+  - ABI-encoded event strings: offset at bytes 1-32, length at bytes 33-64, data starts at byte 65
+  - ERC-721 Transfer event topic0: `0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`
+  - Query 1 should be saved first in Dune as other queries reference it via `query_XXXXXX`
+---
