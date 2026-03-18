@@ -23,6 +23,8 @@ Started: Tue Mar 17 18:02:55 CET 2026
 - viem `publicClient.multicall()` uses Multicall3 automatically — pass array of `{ address, abi, functionName, args }` contracts
 - Always run `npx prettier --write` on new page files before committing
 - ox/erc8021 `Attribution.fromData(txInput)` decodes ERC-8021 suffixes; returns `{ codes: string[] }` or `undefined`
+- Next.js 15: `useSearchParams()` requires `<Suspense>` boundary — extract inner component, wrap in page-level Suspense
+- For user-provided external image URLs, use `<img>` with `eslint-disable-next-line @next/next/no-img-element`
 ---
 
 ## 2026-03-17 - US-001
@@ -226,4 +228,21 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - wagmi `useSignTypedData` hook's `signTypedDataAsync` returns the signature for EIP-712 typed data
   - File-based storage path from apps/web/ needs `../../data/metadata/` to reach project root
   - EIP-712 domain should match between frontend (signing) and backend (verification) exactly
+---
+
+## 2026-03-18 - US-011
+- Implemented registry explorer at /explore with search and sorting
+- Fetches all CodeMinted events via viem getLogs from deploy block to latest
+- Search by code name, owner address, ENS name, or display name (client-side filter)
+- Sort: newest first, oldest first (by mint block number)
+- Each card: code name, owner (with ENS resolution via getEnsName), token ID, mint date, metadata from API
+- Code highlight from query param (?code=X) with ring border — links from analytics leaderboard
+- Wrapped in Suspense boundary for useSearchParams() (Next.js 15 requirement)
+- Responsive grid layout with loading skeletons, empty/error states
+- Files changed:
+  - `apps/web/app/explore/page.tsx` (new)
+- **Learnings for future iterations:**
+  - Next.js 15 requires `useSearchParams()` to be wrapped in a `<Suspense>` boundary — extract inner component and wrap in page export
+  - viem `publicClient.getEnsName()` can fail for non-mainnet chains — wrap in try/catch
+  - Pattern: refactor page into InnerContent + Suspense wrapper when using useSearchParams
 ---

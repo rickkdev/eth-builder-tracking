@@ -254,7 +254,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-011 - Registry explorer with RPC event logs and Dune data'. No co-author lines."
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "getLogs on CodeMinted events is fine for <10K codes. Cache results server-side and refresh periodically. For attribution stats on detail pages, use Dune API."
     },
     {
