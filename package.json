@@ -1,0 +1,14 @@
+{
+  "name": "eth-builder-eco",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:e2e": "npx tsx test/e2e/e2e.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "viem": "^2.45.0",
+    "ox": "^0.14.5"
+  }
+}

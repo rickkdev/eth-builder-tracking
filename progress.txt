@@ -246,3 +246,23 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - viem `publicClient.getEnsName()` can fail for non-mainnet chains — wrap in try/catch
   - Pattern: refactor page into InnerContent + Suspense wrapper when using useSearchParams
 ---
+
+## 2026-03-18 - US-012
+- Implemented E2E integration test on Anvil validating the complete tracking flow
+- Test deploys CodesRegistry, mints 3 codes from 3 accounts, sends attributed transactions, decodes suffixes
+- 7 test sections, 23 assertions: deploy, mint, ownership, attributed txs, suffix decode, ERC-721 transfer, multi-code suffix
+- Auto-starts/stops Anvil if not already running
+- Root package.json with `npm run test:e2e` script using tsx for TypeScript execution
+- All 23 assertions pass
+- Files changed:
+  - `test/e2e/e2e.test.ts` (new - E2E test script)
+  - `package.json` (new - root package.json with test:e2e script)
+  - `package-lock.json` (new - lockfile)
+- **Learnings for future iterations:**
+  - `npx tsx` runs TypeScript files directly without tsconfig — good for standalone test scripts
+  - viem `privateKeyToAccount` from `viem/accounts` creates local accounts for Anvil
+  - `Attribution.toDataSuffix({ codes: [...] })` returns a hex string that can be used as transaction `data`
+  - `Attribution.fromData(tx.input)` decodes suffixes from raw transaction input
+  - Foundry artifacts at `contracts/out/CodesRegistry.sol/CodesRegistry.json` contain both ABI and bytecode
+  - viem `deployContract` + `waitForTransactionReceipt` pattern for programmatic contract deployment
+---

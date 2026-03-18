@@ -276,7 +276,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-012 - End-to-end integration test on Anvil'. No co-author lines."
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Validates the entire tracking system before mainnet."
     },
     {
