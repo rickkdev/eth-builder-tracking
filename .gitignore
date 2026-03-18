@@ -1,0 +1,18 @@
+# Foundry
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+
+# Environment
+.env
+.env.*
+
+# Frontend
+apps/web/node_modules/
+apps/web/.next/
+apps/web/.vercel/
+
+# OS
+.DS_Store
+.last-branch
+node_modules/

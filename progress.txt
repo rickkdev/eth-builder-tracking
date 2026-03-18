@@ -1,3 +1,302 @@
 # Ralph Progress Log
 Started: Tue Mar 17 18:02:55 CET 2026
 ---
+
+## Codebase Patterns
+- Foundry project lives in `contracts/` with OpenZeppelin v5.6.1 and forge-std v1.15.0
+- Remappings: `@openzeppelin/contracts/` maps to `lib/openzeppelin-contracts/contracts/`
+- CodesRegistry uses custom errors (not require strings) for gas efficiency
+- Token IDs are sequential starting from 0 via `_nextTokenId++`
+- Code lookups use `keccak256(bytes(code))` as mapping key for O(1) access
+- Forge linter notes about plain imports and asm-keccak256 are informational only, not errors
+- Foundry scripts go in `contracts/script/`, use `vm.startBroadcast()`/`vm.stopBroadcast()`, run with `forge script` + `--broadcast`
+- Anvil default account #0 key: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
+- SE2 frontend lives in `apps/web/` with Next.js 15, React 19, Wagmi 2.19.5, Viem 2.47.4
+- ox/erc8021 `Attribution.toDataSuffix({ codes: ['code'] })` generates ERC-8021 suffix (note: `codes` is plural array)
+- SE2 uses `~~/*` path alias for root imports, DaisyUI 5 + Tailwind 4 for styling
+- Contract ABI goes in `apps/web/contracts/deployedContracts.ts` keyed by chainId
+- SE2 scaffold hooks: `useScaffoldReadContract`, `useScaffoldWriteContract`, `useScaffoldEventHistory`
+- Use `--legacy-peer-deps` for npm install (React 19 peer dep conflicts with some packages)
+- Nav links configured in `apps/web/components/Header.tsx` `menuLinks` array
+- SE2 scaffold hooks expect args as `[valueOrUndefined]` tuple, not `undefined` for the entire array
+- Use `getBlockExplorerTxLink(chainId, txHash)` from `~~/utils/scaffold-eth/networks` for Etherscan links
+- viem `publicClient.multicall()` uses Multicall3 automatically — pass array of `{ address, abi, functionName, args }` contracts
+- Always run `npx prettier --write` on new page files before committing
+- ox/erc8021 `Attribution.fromData(txInput)` decodes ERC-8021 suffixes; returns `{ codes: string[] }` or `undefined`
+- Next.js 15: `useSearchParams()` requires `<Suspense>` boundary — extract inner component, wrap in page-level Suspense
+- For user-provided external image URLs, use `<img>` with `eslint-disable-next-line @next/next/no-img-element`
+---
+
+## 2026-03-17 - US-001
+- Implemented CodesRegistry ERC-721 contract with unique ASCII code minting
+- Foundry project initialized with OpenZeppelin, remappings configured
+- 16 unit tests covering: mint, events, duplicate rejection, empty/too-long/invalid chars revert, max length, transfer updates ownership, code lookups, nonexistent token/code reverts
+- Files changed:
+  - `contracts/src/CodesRegistry.sol` (new)
+  - `contracts/test/CodesRegistry.t.sol` (new)
+  - `contracts/remappings.txt` (new)
+  - Removed default Counter.sol files from forge init
+- **Learnings for future iterations:**
+  - OpenZeppelin v5 uses `_requireOwned(tokenId)` instead of `_exists(tokenId)` for token existence checks
+  - `ERC721._mint` no longer has a safe variant requirement in OZ v5 - it just mints directly
+  - Forge init creates Counter.sol scaffold files that need to be removed
+  - Mint gas cost is ~148K gas (within expected ~150K range)
+---
+
+## 2026-03-17 - US-002
+- Implemented Deploy.s.sol and SmokeTest.s.sol Foundry scripts for local Anvil deployment
+- Deploy script logs contract address; SmokeTest deploys, mints a code, and verifies ownership
+- Wrote comprehensive contracts/README.md with local deploy instructions, gas report table, and production deployment guide
+- Verified both scripts run successfully on local Anvil
+- .gitignore already covers .env, broadcast/, cache/, out/
+- Files changed:
+  - `contracts/script/Deploy.s.sol` (new)
+  - `contracts/script/SmokeTest.s.sol` (new)
+  - `contracts/README.md` (rewritten)
+- **Learnings for future iterations:**
+  - Anvil default account #0 private key: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
+  - Forge scripts use `vm.startBroadcast()` / `vm.stopBroadcast()` for on-chain transactions
+  - Deploy cost is ~2.3M gas, mint is ~150K gas median
+  - Forge linter notes about plain imports and asm-keccak256 are informational only (as noted in patterns)
+---
+
+## 2026-03-17 - US-003
+- Scaffolded Scaffold-ETH 2 frontend in `apps/web/` using create-eth@2.0.10 with Foundry option
+- Configured Wagmi with ox/erc8021 dataSuffix for ERC-8021 builder code attribution
+- Set up CodesRegistry contract ABI in deployedContracts.ts for mainnet (chain 1) and Sepolia (chain 11155111)
+- Configured scaffold.config.ts: mainnet + Sepolia targets, llamarpc.com RPC override, burner wallet disabled
+- Updated wagmiConnectors with MetaMask, WalletConnect, Coinbase Wallet, Ledger, Rainbow, Safe
+- Customized Header with nav links for all planned pages (Claim, My Codes, Explorer, Verify, Analytics, Docs)
+- Updated home page with app branding and CTA cards
+- Updated Footer with project branding
+- TypeScript strict passes, ESLint clean, Next.js build succeeds
+- Files changed:
+  - `apps/web/` (new - entire SE2 frontend scaffold)
+  - `apps/web/scaffold.config.ts` (configured for mainnet+sepolia)
+  - `apps/web/services/web3/wagmiConfig.tsx` (added dataSuffix from ox/erc8021)
+  - `apps/web/services/web3/wagmiConnectors.tsx` (removed burner wallet, added Coinbase)
+  - `apps/web/contracts/deployedContracts.ts` (CodesRegistry ABI for both chains)
+  - `apps/web/components/Header.tsx` (app branding + nav links)
+  - `apps/web/components/Footer.tsx` (simplified footer)
+  - `apps/web/app/page.tsx` (landing page with CTAs)
+  - `apps/web/app/layout.tsx` (updated metadata)
+  - `.gitignore` (added apps/web/ entries)
+- **Learnings for future iterations:**
+  - ox/erc8021 API uses `codes` (plural array): `Attribution.toDataSuffix({ codes: ['mycode'] })`
+  - ox version must be ^0.14.x for erc8021 support (earlier versions don't have it)
+  - viem 2.45+ has `dataSuffix` on wallet client config, but wagmi 2.x doesn't forward it to createConfig - export it separately for per-tx use
+  - SE2 creates-eth@2.0.10 uses yarn by default; switched to npm with `--legacy-peer-deps` for React 19 compat
+  - SE2 has a pre-existing TS issue in useScaffoldEventHistory.ts with deployedOnBlock type - needs cast to fix
+  - burner-connector package removed; RevealBurnerPKModal stubbed as no-op
+---
+
+## 2026-03-17 - US-004
+- Implemented code claiming flow with real-time validation and mint UI at /claim
+- Input validates: length (1-32), lowercase alphanumeric + underscore only
+- Debounced on-chain availability check via useScaffoldReadContract (codeExists)
+- Green check / red X availability indicator in input field
+- Mint button with useScaffoldWriteContract, loading spinner during transaction
+- Error handling: wallet rejection, code taken (race condition), generic errors via getParsedError
+- Success state: shows minted code, token ID, owner address, Etherscan tx link, "View My Codes" link
+- Wallet not connected state handled with prompt message
+- Files changed:
+  - `apps/web/app/claim/page.tsx` (new)
+- **Learnings for future iterations:**
+  - SE2 scaffold hooks expect args as `[valueOrUndefined]` tuple (not `undefined` for the whole array) - the hook disables the query when any arg is `undefined`
+  - Use `notification.success/error` from `~~/utils/scaffold-eth` for toast messages
+  - `getParsedError` from `~~/utils/scaffold-eth/getParsedError` provides user-friendly error messages from viem/wagmi errors
+  - `getBlockExplorerTxLink(chainId, txHash)` from `~~/utils/scaffold-eth/networks` builds Etherscan links
+  - Prettier enforces specific import ordering - keep scaffold-eth imports grouped
+---
+
+## 2026-03-18 - US-005
+- Implemented My Codes dashboard at /my-codes with Multicall3 batch reads
+- Fetches owned token IDs via getLogs on Transfer events (incoming - outgoing = currently owned)
+- Batch-reads code strings via publicClient.multicall (Multicall3)
+- Fetches block timestamps for mint dates
+- Loading skeleton states, empty state ("No codes yet — claim your first!"), error state with retry
+- Responsive grid layout with code cards showing: code string, token ID, mint date
+- Fixed prettier formatting issues (spread in Set constructor, ternary parens, JSX attribute formatting)
+- Files changed:
+  - `apps/web/app/my-codes/page.tsx` (new)
+- **Learnings for future iterations:**
+  - viem's `publicClient.multicall()` uses Multicall3 (0xcA11bde05977b3631167028862bE2a173976CA11) automatically — no need to specify the address
+  - For computing currently owned tokens, fetch Transfer events TO user and FROM user, then subtract outgoing set
+  - Use `fromBlock: 0n` with viem getLogs (bigint, not number)
+  - Always run `npx prettier --write` on new files before committing — SE2 has strict prettier rules
+---
+
+## 2026-03-18 - US-006
+- Implemented transaction verification tool at /verify
+- Input validates tx hash format (66-char hex with 0x prefix) using viem's isHash
+- Fetches transaction via publicClient.getTransaction, decodes ERC-8021 suffix using ox/erc8021 Attribution.fromData()
+- If code found: displays code string, looks up owner from CodesRegistry, shows "not registered" warning if code not in registry
+- If not found: clear "No Builder Code Found" message
+- Etherscan link for the transaction
+- Error handling: tx not found, invalid hash, network errors
+- Loading spinner during verification
+- Files changed:
+  - `apps/web/app/verify/page.tsx` (new)
+- **Learnings for future iterations:**
+  - ox/erc8021 `Attribution.fromData(txInput)` decodes ERC-8021 suffixes from transaction calldata, returns `{ codes: string[] }` or `undefined`
+  - viem `isHash()` validates tx hash format (useful for input validation)
+  - useScaffoldReadContract with `undefined` arg disables the query — use conditional value to trigger reads only when needed
+---
+
+## 2026-03-18 - US-007
+- Implemented comprehensive documentation page at /docs with 8 sections and sidebar navigation
+- Sections: What are Builder Codes, How It Works, ERC-8021 Standard, Registry Contract, Developer Integration, Wallet Compatibility, Analytics & Tracking, FAQ
+- Interactive suffix generator tool using ox/erc8021 Attribution.toDataSuffix
+- Copy-to-clipboard on all code snippets
+- Responsive: desktop sidebar nav, mobile horizontal scroll nav
+- DaisyUI collapse components for FAQ accordion
+- Code examples for Wagmi config, Viem client, and per-transaction integration
+- Visual byte format diagram for ERC-8021 suffix structure
+- Files changed:
+  - `apps/web/app/docs/page.tsx` (new)
+- **Learnings for future iterations:**
+  - DaisyUI collapse-arrow with radio inputs creates accordion behavior (only one open at a time)
+  - Remove unused function parameters to pass ESLint strict mode
+  - `Attribution.toDataSuffix({ codes: ['code'] })` works client-side for interactive tools
+---
+
+## 2026-03-18 - US-008
+- Created 6 DuneSQL queries in `analytics/dune/` for ERC-8021 attribution analytics
+- Query 1: Parse 0x8021 suffixes from transaction calldata, extract ASCII builder codes
+- Query 2: Join parsed codes with CodesRegistry CodeMinted events for owner lookup
+- Query 3: Daily volume, fees, and unique users per code
+- Query 4: Top 50 codes by 28-day transaction count and volume
+- Query 5: Fee leaderboard ranked by total gas fees generated
+- Query 6: All registered codes with current owners (tracks ERC-721 transfers)
+- Comprehensive README with Dune dashboard setup, API usage, and caching strategy
+- Files changed:
+  - `analytics/dune/01_parse_8021_suffixes.sql` (new)
+  - `analytics/dune/02_codes_with_owners.sql` (new)
+  - `analytics/dune/03_daily_metrics.sql` (new)
+  - `analytics/dune/04_top_codes_28d.sql` (new)
+  - `analytics/dune/05_fee_leaderboard.sql` (new)
+  - `analytics/dune/06_all_registered_codes.sql` (new)
+  - `analytics/dune/README.md` (new)
+- **Learnings for future iterations:**
+  - DuneSQL uses `bytearray_substring()`, `bytearray_to_uint256()`, `from_utf8()` for binary data parsing
+  - ERC-8021 suffix detection: check last 4 bytes for `0x80218021` repeating marker
+  - ABI-encoded event strings: offset at bytes 1-32, length at bytes 33-64, data starts at byte 65
+  - ERC-721 Transfer event topic0: `0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef`
+  - Query 1 should be saved first in Dune as other queries reference it via `query_XXXXXX`
+---
+
+## 2026-03-18 - US-009
+- Implemented public analytics dashboard at /analytics with Dune API integration
+- Summary stats cards: total codes minted, total attributed txs, total fees tracked
+- Leaderboard table: top codes by volume with time range filter (7D, 28D, 90D, All)
+- Volume trend area chart using recharts with responsive container
+- Data fetching layer in services/dune/ with interface: fetchStats(), fetchLeaderboard(), fetchVolumeTrend()
+- Mock data implementation matching Dune API response shapes
+- Dune API integration via NEXT_PUBLIC_DUNE_API_KEY env var with 10-minute client-side cache
+- Graceful fallback to mock data when Dune API unavailable
+- Each code row links to /explore?code=X detail view
+- Responsive, mobile-friendly (hides some columns on small screens)
+- Loading skeletons, error state with retry
+- Files changed:
+  - `apps/web/services/dune/index.ts` (new - data fetching layer)
+  - `apps/web/app/analytics/page.tsx` (new - analytics dashboard)
+- **Learnings for future iterations:**
+  - recharts Tooltip `formatter` prop expects `value` param typed as `ValueType | undefined`, not `number` — use `Number(value ?? 0)` for safe formatting
+  - DaisyUI `join` component creates button groups for time range selectors
+  - oklch CSS variables from DaisyUI (e.g., `oklch(var(--p))`) work in recharts stroke/fill props
+  - Dune API endpoint: `api.dune.com/api/v1/query/{id}/results` with `X-Dune-API-Key` header
+  - Environment variables for Dune: NEXT_PUBLIC_DUNE_API_KEY, NEXT_PUBLIC_DUNE_QUERY_STATS, NEXT_PUBLIC_DUNE_QUERY_LEADERBOARD, NEXT_PUBLIC_DUNE_QUERY_VOLUME_TREND
+---
+
+## 2026-03-18 - US-010
+- Implemented off-chain metadata with EIP-712 signature verification
+- API routes: GET /api/metadata/[code] and PUT /api/metadata/[code]
+- EIP-712 typed data signing with domain separator (contract address + chainId) for replay protection
+- Server-side signature recovery via viem recoverTypedDataAddress, then on-chain ownership check via ownerOfCode
+- File-based JSON storage in data/metadata/ directory
+- Metadata schema: code, displayName, website, logoUrl, description
+- Input validation: URL format, string lengths (64/256/512/500), HTML/script injection sanitization
+- Updated /my-codes page with metadata display on code cards (logo, display name, description, website)
+- Edit Profile modal with EIP-712 signing via wagmi useSignTypedData
+- Files changed:
+  - `apps/web/app/api/metadata/[code]/route.ts` (new - API routes)
+  - `apps/web/app/my-codes/page.tsx` (updated - metadata display + edit modal)
+  - `data/metadata/.gitkeep` (new - storage directory)
+- **Learnings for future iterations:**
+  - viem `recoverTypedDataAddress()` returns `string` not `\`0x${string}\`` — use `string` type for signerAddress
+  - For user-provided external image URLs, use `<img>` with eslint-disable comment since `next/image` requires domain whitelisting
+  - wagmi `useSignTypedData` hook's `signTypedDataAsync` returns the signature for EIP-712 typed data
+  - File-based storage path from apps/web/ needs `../../data/metadata/` to reach project root
+  - EIP-712 domain should match between frontend (signing) and backend (verification) exactly
+---
+
+## 2026-03-18 - US-011
+- Implemented registry explorer at /explore with search and sorting
+- Fetches all CodeMinted events via viem getLogs from deploy block to latest
+- Search by code name, owner address, ENS name, or display name (client-side filter)
+- Sort: newest first, oldest first (by mint block number)
+- Each card: code name, owner (with ENS resolution via getEnsName), token ID, mint date, metadata from API
+- Code highlight from query param (?code=X) with ring border — links from analytics leaderboard
+- Wrapped in Suspense boundary for useSearchParams() (Next.js 15 requirement)
+- Responsive grid layout with loading skeletons, empty/error states
+- Files changed:
+  - `apps/web/app/explore/page.tsx` (new)
+- **Learnings for future iterations:**
+  - Next.js 15 requires `useSearchParams()` to be wrapped in a `<Suspense>` boundary — extract inner component and wrap in page export
+  - viem `publicClient.getEnsName()` can fail for non-mainnet chains — wrap in try/catch
+  - Pattern: refactor page into InnerContent + Suspense wrapper when using useSearchParams
+---
+
+## 2026-03-18 - US-012
+- Implemented E2E integration test on Anvil validating the complete tracking flow
+- Test deploys CodesRegistry, mints 3 codes from 3 accounts, sends attributed transactions, decodes suffixes
+- 7 test sections, 23 assertions: deploy, mint, ownership, attributed txs, suffix decode, ERC-721 transfer, multi-code suffix
+- Auto-starts/stops Anvil if not already running
+- Root package.json with `npm run test:e2e` script using tsx for TypeScript execution
+- All 23 assertions pass
+- Files changed:
+  - `test/e2e/e2e.test.ts` (new - E2E test script)
+  - `package.json` (new - root package.json with test:e2e script)
+  - `package-lock.json` (new - lockfile)
+- **Learnings for future iterations:**
+  - `npx tsx` runs TypeScript files directly without tsconfig — good for standalone test scripts
+  - viem `privateKeyToAccount` from `viem/accounts` creates local accounts for Anvil
+  - `Attribution.toDataSuffix({ codes: [...] })` returns a hex string that can be used as transaction `data`
+  - `Attribution.fromData(tx.input)` decodes suffixes from raw transaction input
+  - Foundry artifacts at `contracts/out/CodesRegistry.sol/CodesRegistry.json` contain both ABI and bytecode
+  - viem `deployContract` + `waitForTransactionReceipt` pattern for programmatic contract deployment
+---
+
+## 2026-03-18 - US-013
+- Implemented landing page with ecosystem positioning at /
+- Hero: "Attribution for Ethereum. Know who built what." with 3 CTA buttons
+- How it works: 3-step visual (Claim code → Add one line → Track everything)
+- Code snippet: mockup-code showing one-line Wagmi config
+- Benefits: Analytics, Ecosystem Visibility, Zero Overhead, Battle-Tested Standard
+- ERC-8021 technical section: byte format diagram with badge components, gas cost callouts
+- FAQ accordion: mint cost, wallet compatibility, transferability, L2 support, Etherscan verification
+- Footer: links to ERC-8021 spec, docs, dashboard, explorer
+- Responsive, no heavy images, fast load
+- Files changed:
+  - `apps/web/app/page.tsx` (rewritten)
+- **Learnings for future iterations:**
+  - DaisyUI `mockup-code` component creates styled code blocks with line numbers (data-prefix attribute)
+  - DaisyUI `collapse collapse-arrow` with radio inputs creates accordion FAQ
+  - Use `&apos;` for apostrophes in JSX to avoid ESLint warnings
+---
+
+## 2026-03-18 - US-014
+- Ran Slither static analysis: zero findings on CodesRegistry.sol (all 46 findings are OpenZeppelin library internals)
+- Created comprehensive SECURITY_AUDIT.md with:
+  - Slither results summary
+  - Security checklist: access control, CEI pattern, events, input validation, no hardcoded addresses, gas efficiency, no money handling
+  - Gas report table for all public functions
+  - Post-deploy checklist (Etherscan verification, frontend update, monitoring)
+- Verified all forge tests pass (16/16)
+- Files changed:
+  - `contracts/SECURITY_AUDIT.md` (new)
+- **Learnings for future iterations:**
+  - Slither install: `pip3 install slither-analyzer`, run with `python3 -m slither .`
+  - Slither findings on OpenZeppelin are all informational/known patterns — filter by contract file to see only your findings
+  - `forge test --gas-report` generates gas table for all tested functions
+---
