@@ -234,7 +234,7 @@
         "COMMIT: git add all changes and commit with message 'feat: US-010 - Off-chain metadata with EIP-712 signature verification'. No co-author lines."
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Ethskills security: 'EIP-712 enables structured data signing with domain separation and replay protection.' Ethskills ship: 'User profiles stay offchain.'"
     },
     {

@@ -205,3 +205,25 @@ Started: Tue Mar 17 18:02:55 CET 2026
   - Dune API endpoint: `api.dune.com/api/v1/query/{id}/results` with `X-Dune-API-Key` header
   - Environment variables for Dune: NEXT_PUBLIC_DUNE_API_KEY, NEXT_PUBLIC_DUNE_QUERY_STATS, NEXT_PUBLIC_DUNE_QUERY_LEADERBOARD, NEXT_PUBLIC_DUNE_QUERY_VOLUME_TREND
 ---
+
+## 2026-03-18 - US-010
+- Implemented off-chain metadata with EIP-712 signature verification
+- API routes: GET /api/metadata/[code] and PUT /api/metadata/[code]
+- EIP-712 typed data signing with domain separator (contract address + chainId) for replay protection
+- Server-side signature recovery via viem recoverTypedDataAddress, then on-chain ownership check via ownerOfCode
+- File-based JSON storage in data/metadata/ directory
+- Metadata schema: code, displayName, website, logoUrl, description
+- Input validation: URL format, string lengths (64/256/512/500), HTML/script injection sanitization
+- Updated /my-codes page with metadata display on code cards (logo, display name, description, website)
+- Edit Profile modal with EIP-712 signing via wagmi useSignTypedData
+- Files changed:
+  - `apps/web/app/api/metadata/[code]/route.ts` (new - API routes)
+  - `apps/web/app/my-codes/page.tsx` (updated - metadata display + edit modal)
+  - `data/metadata/.gitkeep` (new - storage directory)
+- **Learnings for future iterations:**
+  - viem `recoverTypedDataAddress()` returns `string` not `\`0x${string}\`` — use `string` type for signerAddress
+  - For user-provided external image URLs, use `<img>` with eslint-disable comment since `next/image` requires domain whitelisting
+  - wagmi `useSignTypedData` hook's `signTypedDataAsync` returns the signature for EIP-712 typed data
+  - File-based storage path from apps/web/ needs `../../data/metadata/` to reach project root
+  - EIP-712 domain should match between frontend (signing) and backend (verification) exactly
+---
