@@ -1,13 +1,13 @@
-# Dune Analytics - Ethereum Builder Codes
+# Dune Analytics - BuilderTag
 
-DuneSQL queries for parsing ERC-8021 builder code suffixes from Ethereum mainnet transactions and producing attribution metrics.
+DuneSQL queries for parsing ERC-8021 builder tag suffixes from Ethereum mainnet transactions and producing attribution metrics.
 
 ## Queries
 
 | # | File | Description |
 |---|------|-------------|
 | 1 | `01_parse_8021_suffixes.sql` | Parse transactions with ERC-8021 suffixes - detects 0x8021 marker, extracts ASCII code |
-| 2 | `02_codes_with_owners.sql` | Join parsed codes with CodesRegistry events to get code owners |
+| 2 | `02_codes_with_owners.sql` | Join parsed codes with TagRegistry events to get code owners |
 | 3 | `03_daily_metrics.sql` | Daily volume (ETH), gas fees, unique users per code |
 | 4 | `04_top_codes_28d.sql` | Top 50 codes by 28-day transaction count and volume |
 | 5 | `05_fee_leaderboard.sql` | Leaderboard ranked by total fees generated (SUM gas_used * gas_price) |
@@ -20,9 +20,9 @@ DuneSQL queries for parsing ERC-8021 builder code suffixes from Ethereum mainnet
 1. Go to [dune.com](https://dune.com) and sign in
 2. Click **New Query** and paste a query from this directory
 3. Replace template variables:
-   - `{{codes_registry_address}}` — deployed CodesRegistry contract address
+   - `{{tag_registry_address}}` — deployed TagRegistry contract address
    - `query_XXXXXX` — replace with the saved Query 1 ID (queries 2-5 reference it)
-   - `topic1 = 0x` — replace with the `keccak256("CodeMinted(uint256,string,address)")` event topic hash
+   - `topic1 = 0x` — replace with the `keccak256("TagMinted(uint256,string,address)")` event topic hash
 4. Save each query with a descriptive name
 5. Create a new dashboard and add query visualizations
 
@@ -62,7 +62,7 @@ export DUNE_API_KEY="your_api_key_here"
 curl -X POST "https://api.dune.com/api/v1/query/{query_id}/execute" \
   -H "X-Dune-API-Key: $DUNE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"query_parameters": {"codes_registry_address": "0xYOUR_CONTRACT_ADDRESS"}}'
+  -d '{"query_parameters": {"tag_registry_address": "0xYOUR_CONTRACT_ADDRESS"}}'
 ```
 
 ### Get Results

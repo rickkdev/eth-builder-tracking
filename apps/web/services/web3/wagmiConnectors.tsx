@@ -28,7 +28,7 @@ export const wagmiConnectors = () => {
       },
     ],
     {
-      appName: "Ethereum Builder Codes",
+      appName: "BuilderTag",
       projectId: scaffoldConfig.walletConnectProjectId,
     },
   );

@@ -2,19 +2,19 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import "../src/CodesRegistry.sol";
+import "../src/TagRegistry.sol";
 
 contract SmokeTest is Script {
     function run() external {
         // Deploy
         vm.startBroadcast();
 
-        CodesRegistry registry = new CodesRegistry();
-        console.log("CodesRegistry deployed at:", address(registry));
+        TagRegistry registry = new TagRegistry();
+        console.log("TagRegistry deployed at:", address(registry));
 
-        // Mint a code
+        // Mint a tag
         uint256 tokenId = registry.mint("smoke_test");
-        console.log("Minted code 'smoke_test' with tokenId:", tokenId);
+        console.log("Minted tag 'smoke_test' with tokenId:", tokenId);
 
         // Verify ownership
         address owner = registry.ownerOfCode("smoke_test");

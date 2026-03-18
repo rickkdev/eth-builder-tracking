@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 import { Attribution } from "ox/erc8021";
 
 const SECTIONS = [
-  { id: "what", label: "What are Builder Codes" },
+  { id: "what", label: "What is BuilderTag" },
   { id: "how", label: "How It Works" },
   { id: "erc8021", label: "ERC-8021 Standard" },
   { id: "registry", label: "Registry Contract" },
@@ -60,7 +60,7 @@ function SuffixGenerator() {
       <div className="form-control w-full max-w-md">
         <input
           type="text"
-          placeholder="Enter your builder code..."
+          placeholder="Enter your builder tag..."
           className="input input-bordered w-full font-mono"
           value={code}
           onChange={e => setCode(e.target.value.toLowerCase())}
@@ -137,20 +137,19 @@ const DocsPage: NextPage = () => {
 
       {/* Main content */}
       <main className="flex-1 max-w-3xl mx-auto px-4 py-10 space-y-16">
-        {/* Section 1: What are Builder Codes */}
+        {/* Section 1: What is BuilderTag */}
         <section id="what">
-          <h2 className="text-3xl font-bold mb-4">What are Builder Codes?</h2>
+          <h2 className="text-3xl font-bold mb-4">What is BuilderTag?</h2>
           <p className="mb-4">
-            Builder Codes are unique identifiers that attribute on-chain transactions to the applications and developers
-            that originated them. Think of them as referral codes for Ethereum &mdash; but fully on-chain,
-            permissionless, and standardized.
+            BuilderTag lets you tag on-chain transactions with the application or developer that originated them.
+            Think of it as a tracking label for Ethereum &mdash; fully on-chain, permissionless, and standardized.
+            No incentives, no payouts &mdash; purely tracking.
           </p>
           <p className="mb-4">
-            <strong>Base pioneered this concept</strong> with their Builder Codes system, using the ERC-8021 standard to
-            track which apps drive transaction volume on their L2. Ethereum Builder Codes bring the same powerful
-            attribution system to Ethereum mainnet.
+            Base pioneered ERC-8021 for tracking which apps drive transaction volume on their L2. BuilderTag brings
+            the same tracking system to Ethereum mainnet, focused strictly on visibility and analytics.
           </p>
-          <h3 className="text-xl font-semibold mt-8 mb-3">Why Attribution Matters</h3>
+          <h3 className="text-xl font-semibold mt-8 mb-3">Why Tracking Matters</h3>
           <ul className="list-disc list-inside space-y-2 text-base-content/80">
             <li>
               <strong>Ecosystem visibility</strong> &mdash; Know which apps and builders are driving real on-chain
@@ -163,7 +162,7 @@ const DocsPage: NextPage = () => {
               <strong>Identity</strong> &mdash; Builders get a verifiable on-chain identity tied to their work
             </li>
             <li>
-              <strong>Composability</strong> &mdash; Any protocol can read attribution data and build on top of it
+              <strong>Composability</strong> &mdash; Any protocol can read tracking data and build on top of it
             </li>
           </ul>
         </section>
@@ -178,7 +177,7 @@ const DocsPage: NextPage = () => {
               <div className="text-2xl font-bold text-primary mb-2">1</div>
               <h4 className="font-bold mb-1">Claim a Code</h4>
               <p className="text-sm text-base-content/70">
-                Mint a unique builder code as an ERC-721 NFT. You own it, you can transfer it, and it&apos;s verifiable
+                Mint a unique builder tag as an ERC-721 NFT. You own it, you can transfer it, and it&apos;s verifiable
                 on-chain.
               </p>
             </div>
@@ -242,7 +241,7 @@ const DocsPage: NextPage = () => {
                 <strong>Length byte:</strong> Number of bytes in the code (1-32)
               </p>
               <p>
-                <strong>ASCII code bytes:</strong> Your builder code encoded as ASCII
+                <strong>ASCII code bytes:</strong> Your builder tag encoded as ASCII
               </p>
               <p>
                 <strong>0x8021 marker:</strong> Repeating end marker for suffix detection
@@ -258,7 +257,7 @@ const DocsPage: NextPage = () => {
 
           <h3 className="text-xl font-semibold mb-3">Gas Cost</h3>
           <p className="text-base-content/80">
-            Each non-zero byte of calldata costs 16 gas, and each zero byte costs 4 gas. A typical builder code suffix
+            Each non-zero byte of calldata costs 16 gas, and each zero byte costs 4 gas. A typical builder tag suffix
             adds 10-40 bytes, costing <strong>less than $0.001</strong> in extra gas per transaction at current mainnet
             rates.
           </p>
@@ -268,8 +267,8 @@ const DocsPage: NextPage = () => {
         <section id="registry">
           <h2 className="text-3xl font-bold mb-4">Registry Contract</h2>
           <p className="mb-4">
-            The CodesRegistry is an ERC-721 contract where each token represents a unique builder code. The NFT owner is
-            the code owner &mdash; transfer the NFT to transfer code ownership.
+            The TagRegistry is an ERC-721 contract where each token represents a unique builder tag. The NFT owner is
+            the tag owner &mdash; transfer the NFT to transfer tag ownership.
           </p>
 
           <h3 className="text-xl font-semibold mt-6 mb-3">Key Functions</h3>
@@ -338,7 +337,7 @@ const DocsPage: NextPage = () => {
         <section id="integration">
           <h2 className="text-3xl font-bold mb-4">Developer Integration Guide</h2>
           <p className="mb-6">
-            Adding builder code attribution to your dApp takes less than 5 minutes. Here&apos;s how:
+            Adding builder tag tracking to your dApp takes less than 5 minutes. Here&apos;s how:
           </p>
 
           <h3 className="text-xl font-semibold mb-3">Quick Start</h3>
@@ -348,7 +347,7 @@ const DocsPage: NextPage = () => {
           <h3 className="text-xl font-semibold mt-8 mb-3">Wagmi Config (Recommended)</h3>
           <p className="mb-2 text-base-content/80">
             Set <code className="font-mono bg-base-300 px-1 rounded">dataSuffix</code> once in your Wagmi config. Every
-            transaction your app sends will automatically include the attribution suffix:
+            transaction your app sends will automatically include the tracking suffix:
           </p>
           <CodeBlock
             code={`import { createConfig, http } from "wagmi";
@@ -383,7 +382,7 @@ const client = createWalletClient({
 });
 
 // All transactions sent via this client
-// will include the builder code suffix`}
+// will include the builder tag suffix`}
           />
 
           <h3 className="text-xl font-semibold mt-8 mb-3">Per-Transaction (Legacy)</h3>
@@ -444,8 +443,8 @@ await walletClient.sendTransaction({
         <section id="analytics">
           <h2 className="text-3xl font-bold mb-4">Analytics & Tracking</h2>
           <p className="mb-4">
-            All attribution data is on-chain and publicly queryable. Dune Analytics provides the primary analytics layer
-            for builder code tracking.
+            All tracking data is on-chain and publicly queryable. Dune Analytics provides the primary analytics layer
+            for builder tag tracking.
           </p>
 
           <h3 className="text-xl font-semibold mt-6 mb-3">How Dune Parses Suffixes</h3>
@@ -453,15 +452,15 @@ await walletClient.sendTransaction({
             Dune queries scan the <code className="font-mono bg-base-300 px-1 rounded">data</code> column of{" "}
             <code className="font-mono bg-base-300 px-1 rounded">ethereum.transactions</code> for the repeating{" "}
             <code className="font-mono bg-base-300 px-1 rounded">0x8021</code> marker at the end of calldata. When
-            found, the query extracts the builder code bytes and decodes them as ASCII.
+            found, the query extracts the builder tag bytes and decodes them as ASCII.
           </p>
 
           <h3 className="text-xl font-semibold mt-6 mb-3">Available Metrics</h3>
           <ul className="list-disc list-inside space-y-1 text-base-content/80">
-            <li>Transaction count per builder code</li>
-            <li>ETH volume attributed per code</li>
-            <li>Gas fees generated per code</li>
-            <li>Unique users per code</li>
+            <li>Transaction count per builder tag</li>
+            <li>ETH volume tracked per tag</li>
+            <li>Gas fees generated per tag</li>
+            <li>Unique users per tag</li>
             <li>Daily/weekly/monthly trends</li>
             <li>Leaderboard rankings</li>
           </ul>
@@ -469,7 +468,7 @@ await walletClient.sendTransaction({
           <h3 className="text-xl font-semibold mt-6 mb-3">Build Your Own Queries</h3>
           <p className="mb-2 text-base-content/80">
             The <code className="font-mono bg-base-300 px-1 rounded">analytics/dune/</code> directory in this repository
-            contains ready-to-use DuneSQL queries for all attribution metrics. Fork them on Dune to create your own
+            contains ready-to-use DuneSQL queries for all tracking metrics. Fork them on Dune to create your own
             custom dashboards.
           </p>
           <p className="text-base-content/80">
@@ -485,7 +484,7 @@ await walletClient.sendTransaction({
           <div className="space-y-4">
             <div className="collapse collapse-arrow bg-base-200">
               <input type="radio" name="faq" defaultChecked />
-              <div className="collapse-title font-semibold">How much does it cost to mint a code?</div>
+              <div className="collapse-title font-semibold">How much does it cost to mint a tag?</div>
               <div className="collapse-content text-base-content/80">
                 <p>
                   Minting costs approximately 150K gas, which is about <strong>$0.03</strong> at current mainnet rates
@@ -507,11 +506,11 @@ await walletClient.sendTransaction({
 
             <div className="collapse collapse-arrow bg-base-200">
               <input type="radio" name="faq" />
-              <div className="collapse-title font-semibold">Can codes be transferred?</div>
+              <div className="collapse-title font-semibold">Can tags be transferred?</div>
               <div className="collapse-content text-base-content/80">
                 <p>
-                  Yes! Builder codes are ERC-721 NFTs. You can transfer them using any NFT marketplace or wallet that
-                  supports ERC-721 transfers. The new owner becomes the code owner.
+                  Yes! Builder tags are ERC-721 NFTs. You can transfer them using any NFT marketplace or wallet that
+                  supports ERC-721 transfers. The new owner becomes the tag owner.
                 </p>
               </div>
             </div>
@@ -536,7 +535,7 @@ await walletClient.sendTransaction({
               <div className="collapse-content text-base-content/80">
                 <p>
                   The ERC-8021 standard works on any EVM chain. Base already uses it on their L2. You can deploy the
-                  CodesRegistry contract on any EVM-compatible chain and use the same suffix format. The{" "}
+                  TagRegistry contract on any EVM-compatible chain and use the same suffix format. The{" "}
                   <code className="font-mono bg-base-300 px-1 rounded">ox/erc8021</code> library generates identical
                   suffixes regardless of chain.
                 </p>
@@ -557,11 +556,11 @@ await walletClient.sendTransaction({
 
             <div className="collapse collapse-arrow bg-base-200">
               <input type="radio" name="faq" />
-              <div className="collapse-title font-semibold">Do I need to register a code to tag transactions?</div>
+              <div className="collapse-title font-semibold">Do I need to register a tag to track transactions?</div>
               <div className="collapse-content text-base-content/80">
                 <p>
-                  Technically, the ERC-8021 suffix works with any string. However, registering your code on the
-                  CodesRegistry gives you verifiable ownership, prevents others from claiming your code, and enables
+                  Technically, the ERC-8021 suffix works with any string. However, registering your tag on the
+                  TagRegistry gives you verifiable ownership, prevents others from claiming your tag, and enables
                   analytics dashboards to link transactions to your identity.
                 </p>
               </div>

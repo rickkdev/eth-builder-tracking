@@ -19,9 +19,9 @@ type CodeMetadata = {
 
 const DATA_DIR = join(process.cwd(), "..", "..", "data", "metadata");
 
-const CODES_REGISTRY_ADDRESS = "0x0000000000000000000000000000000000000000" as const;
+const TAG_REGISTRY_ADDRESS = "0x0000000000000000000000000000000000000000" as const;
 
-const CODES_REGISTRY_ABI = [
+const TAG_REGISTRY_ABI = [
   {
     type: "function",
     name: "ownerOfCode",
@@ -32,10 +32,10 @@ const CODES_REGISTRY_ABI = [
 ] as const;
 
 const EIP712_DOMAIN = {
-  name: "EthBuilderCodes",
+  name: "BuilderTag",
   version: "1",
   chainId: 1,
-  verifyingContract: CODES_REGISTRY_ADDRESS,
+  verifyingContract: TAG_REGISTRY_ADDRESS,
 } as const;
 
 const EIP712_TYPES = {
@@ -214,8 +214,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     const owner = await client.readContract({
-      address: CODES_REGISTRY_ADDRESS,
-      abi: CODES_REGISTRY_ABI,
+      address: TAG_REGISTRY_ADDRESS,
+      abi: TAG_REGISTRY_ABI,
       functionName: "ownerOfCode",
       args: [code],
     });

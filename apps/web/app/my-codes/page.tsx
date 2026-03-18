@@ -36,7 +36,7 @@ type CodeCard = {
 const EMPTY_METADATA: CodeMetadata = { displayName: "", website: "", logoUrl: "", description: "" };
 
 const EIP712_DOMAIN = {
-  name: "EthBuilderCodes",
+  name: "BuilderTag",
   version: "1",
   chainId: 1,
   verifyingContract: ZERO_ADDRESS,
@@ -57,7 +57,7 @@ const MyCodesPage: NextPage = () => {
   const { address: connectedAddress, isConnected } = useAccount();
   const { targetNetwork } = useTargetNetwork();
   const publicClient = usePublicClient({ chainId: targetNetwork.id });
-  const { data: contractInfo } = useDeployedContractInfo({ contractName: "CodesRegistry" });
+  const { data: contractInfo } = useDeployedContractInfo({ contractName: "TagRegistry" });
   const { signTypedDataAsync } = useSignTypedData();
 
   const [codes, setCodes] = useState<CodeCard[]>([]);
@@ -262,8 +262,8 @@ const MyCodesPage: NextPage = () => {
   return (
     <div className="flex items-center flex-col grow pt-10 px-4">
       <div className="max-w-4xl w-full">
-        <h1 className="text-center text-3xl font-bold mb-2">My Builder Codes</h1>
-        <p className="text-center text-base-content/70 mb-8">All builder codes owned by your connected wallet.</p>
+        <h1 className="text-center text-3xl font-bold mb-2">My Tags</h1>
+        <p className="text-center text-base-content/70 mb-8">All builder tags owned by your connected wallet.</p>
 
         {/* Not connected */}
         {!isConnected && (

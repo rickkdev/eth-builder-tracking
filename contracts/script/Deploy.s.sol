@@ -2,14 +2,14 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import "../src/CodesRegistry.sol";
+import "../src/TagRegistry.sol";
 
 contract Deploy is Script {
     function run() external {
         vm.startBroadcast();
 
-        CodesRegistry registry = new CodesRegistry();
-        console.log("CodesRegistry deployed at:", address(registry));
+        TagRegistry registry = new TagRegistry();
+        console.log("TagRegistry deployed at:", address(registry));
 
         vm.stopBroadcast();
     }

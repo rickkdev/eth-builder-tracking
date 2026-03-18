@@ -6,8 +6,8 @@ import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "Ethereum Builder Codes",
-  description: "Attribution for Ethereum. Claim a builder code, integrate ERC-8021, track everything.",
+  title: "BuilderTag",
+  description: "Transaction tracking for Ethereum. Claim a tag, integrate ERC-8021, track everything.",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {

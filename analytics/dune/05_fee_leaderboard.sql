@@ -1,5 +1,5 @@
 -- Query 5: Leaderboard ranked by total fees generated
--- Shows which builder codes are responsible for the most gas fees on Ethereum.
+-- Shows which builder tags are responsible for the most gas fees on Ethereum.
 -- Uses effective_gas_price (includes priority fee) for accurate fee calculation.
 
 WITH parsed_attributed_txs AS (
@@ -13,12 +13,12 @@ WITH parsed_attributed_txs AS (
         gas_used,
         gas_price,
         fee_eth,
-        builder_code
+        builder_tag
     FROM query_XXXXXX -- Replace with Query 1 saved query ID
 )
 
 SELECT
-    builder_code,
+    builder_tag,
     -- Fee metrics (primary sort)
     SUM(fee_eth) AS total_fees_eth,
     SUM(gas_used) AS total_gas_used,
@@ -36,5 +36,5 @@ SELECT
     -- Days active
     DATE_DIFF('day', MIN(block_time), MAX(block_time)) + 1 AS days_active
 FROM parsed_attributed_txs
-GROUP BY builder_code
+GROUP BY builder_tag
 ORDER BY total_fees_eth DESC

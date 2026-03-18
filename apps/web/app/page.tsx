@@ -9,15 +9,15 @@ const Home: NextPage = () => {
       {/* Hero */}
       <div className="w-full bg-gradient-to-b from-base-300 to-base-100 py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">Attribution for Ethereum.</h1>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4">Track Every Transaction.</h1>
           <p className="text-xl md:text-2xl text-base-content/70 mb-2">Know who built what.</p>
           <p className="text-lg text-base-content/50 mb-8 max-w-xl mx-auto">
-            Claim a unique builder code, add one line of config, and every transaction from your dApp is attributed to
-            you. Forever.
+            Claim a unique builder tag, add one line of config, and every transaction from your dApp is tracked.
+            Forever.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/claim" className="btn btn-primary btn-lg">
-              Claim Your Code
+              Claim Your Tag
             </Link>
             <Link href="/docs" className="btn btn-outline btn-lg">
               Read the Docs
@@ -36,9 +36,9 @@ const Home: NextPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-4">1</div>
-              <h3 className="text-xl font-semibold mb-2">Claim a Code</h3>
+              <h3 className="text-xl font-semibold mb-2">Claim a Tag</h3>
               <p className="text-base-content/60">
-                Mint a unique builder code as an ERC-721 NFT. Your code is your on-chain identity.
+                Mint a unique builder tag as an ERC-721 NFT. Your tag identifies your dApp on-chain.
               </p>
             </div>
             <div className="text-center">
@@ -63,7 +63,7 @@ const Home: NextPage = () => {
       {/* One line pitch */}
       <div className="w-full bg-base-200 py-12 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-2xl font-semibold mb-4">One line of code. Every transaction attributed.</p>
+          <p className="text-2xl font-semibold mb-4">One line of code. Every transaction tracked.</p>
           <div className="mockup-code text-left max-w-xl mx-auto">
             <pre data-prefix="1">
               <code>{`import { Attribution } from "ox/erc8021";`}</code>
@@ -81,13 +81,13 @@ const Home: NextPage = () => {
       {/* Benefits */}
       <div className="w-full py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Builder Codes?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Why BuilderTag?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="card bg-base-200">
               <div className="card-body">
                 <h3 className="card-title text-lg">Analytics</h3>
                 <p className="text-base-content/60">
-                  Track transaction count, volume, gas fees, and unique users attributed to your dApp.
+                  Track transaction count, volume, gas fees, and unique users from your dApp.
                 </p>
               </div>
             </div>
@@ -111,7 +111,7 @@ const Home: NextPage = () => {
               <div className="card-body">
                 <h3 className="card-title text-lg">Battle-Tested Standard</h3>
                 <p className="text-base-content/60">
-                  Built on ERC-8021, the same standard powering Base Builder Codes. Audited and proven.
+                  Built on ERC-8021, the same standard used by Base. Audited and proven.
                 </p>
               </div>
             </div>
@@ -161,7 +161,7 @@ const Home: NextPage = () => {
           <div className="space-y-2">
             <div className="collapse collapse-arrow bg-base-200">
               <input type="radio" name="faq" defaultChecked />
-              <div className="collapse-title font-medium">How much does it cost to mint a code?</div>
+              <div className="collapse-title font-medium">How much does it cost to mint a tag?</div>
               <div className="collapse-content text-base-content/60">
                 <p>
                   About ~$0.03 at current gas prices (0.1 gwei base fee). The mint transaction uses approximately
@@ -181,10 +181,10 @@ const Home: NextPage = () => {
             </div>
             <div className="collapse collapse-arrow bg-base-200">
               <input type="radio" name="faq" />
-              <div className="collapse-title font-medium">Can codes be transferred?</div>
+              <div className="collapse-title font-medium">Can tags be transferred?</div>
               <div className="collapse-content text-base-content/60">
                 <p>
-                  Yes. Builder codes are ERC-721 NFTs. You can transfer ownership using any NFT marketplace or directly
+                  Yes. Builder tags are ERC-721 NFTs. You can transfer ownership using any NFT marketplace or directly
                   via the contract.
                 </p>
               </div>
@@ -204,7 +204,7 @@ const Home: NextPage = () => {
               <div className="collapse-title font-medium">Is the contract verified on Etherscan?</div>
               <div className="collapse-content text-base-content/60">
                 <p>
-                  Yes, the CodesRegistry contract will be verified on Etherscan after mainnet deployment. The contract
+                  Yes, the TagRegistry contract will be verified on Etherscan after mainnet deployment. The contract
                   pattern is already audited by Base.
                 </p>
               </div>
@@ -216,7 +216,7 @@ const Home: NextPage = () => {
       {/* Footer CTA */}
       <div className="w-full bg-base-300 py-12 px-4">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-lg text-base-content/60 mb-6">What Base built for L2, now for all of Ethereum.</p>
+          <p className="text-lg text-base-content/60 mb-6">Transaction tracking for all of Ethereum.</p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <a
               href="https://eips.ethereum.org/EIPS/eip-8021"

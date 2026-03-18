@@ -1,10 +1,10 @@
--- Query 2: Join parsed builder codes with CodesRegistry CodeMinted events to get code owners
+-- Query 2: Join parsed builder tags with TagRegistry TagMinted events to get code owners
 -- Links on-chain attributed transactions to the registered code owner.
 --
--- CodesRegistry emits: CodeMinted(uint256 indexed tokenId, string code, address indexed owner)
--- Event signature: keccak256("CodeMinted(uint256,string,address)")
+-- TagRegistry emits: TagMinted(uint256 indexed tokenId, string code, address indexed owner)
+-- Event signature: keccak256("TagMinted(uint256,string,address)")
 
--- Replace {{codes_registry_address}} with the deployed CodesRegistry contract address
+-- Replace {{tag_registry_address}} with the deployed TagRegistry contract address
 
 WITH code_owners AS (
     SELECT
@@ -25,8 +25,8 @@ WITH code_owners AS (
         block_number AS mint_block
     FROM ethereum.logs
     WHERE
-        contract_address = {{codes_registry_address}}
-        -- CodeMinted(uint256,string,address) event topic
+        contract_address = {{tag_registry_address}}
+        -- TagMinted(uint256,string,address) event topic
         AND topic1 = 0x -- Replace with actual keccak256 of event signature
         -- For now, match all events from the registry contract
 ),
@@ -41,9 +41,9 @@ attributed_txs AS (
         gas_used,
         gas_price,
         gas_used * gas_price / 1e18 AS fee_eth,
-        -- Placeholder: use the parsed builder_code from Query 1
+        -- Placeholder: use the parsed builder_tag from Query 1
         -- In practice, create this as a Dune view or CTE from Query 1
-        'BUILDER_CODE_PLACEHOLDER' AS builder_code
+        'BUILDER_CODE_PLACEHOLDER' AS builder_tag
     FROM ethereum.transactions
     WHERE bytearray_length(data) >= 5
         AND bytearray_substring(data, bytearray_length(data) - 3, 4) = 0x80218021
@@ -55,11 +55,11 @@ SELECT
     a.sender,
     a.value_eth,
     a.fee_eth,
-    a.builder_code,
+    a.builder_tag,
     c.owner_address AS code_owner,
     c.token_id,
     c.minted_at AS code_minted_at
 FROM attributed_txs a
 LEFT JOIN code_owners c
-    ON a.builder_code = c.code
+    ON a.builder_tag = c.code
 ORDER BY a.block_time DESC

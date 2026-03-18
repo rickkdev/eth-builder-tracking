@@ -67,7 +67,7 @@ const AnalyticsPage: NextPage = () => {
     <div className="flex items-center flex-col grow pt-10 px-4">
       <div className="max-w-6xl w-full">
         <h1 className="text-center text-3xl font-bold mb-2">Analytics</h1>
-        <p className="text-center text-base-content/70 mb-8">Live builder code attribution metrics across Ethereum.</p>
+        <p className="text-center text-base-content/70 mb-8">Live builder tag tracking metrics across Ethereum.</p>
 
         {/* Time Range Selector */}
         <div className="flex justify-center mb-8">

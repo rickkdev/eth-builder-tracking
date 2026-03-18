@@ -1,4 +1,4 @@
--- Query 4: Top 50 builder codes by 28-day attributed transaction count and volume
+-- Query 4: Top 50 builder tags by 28-day attributed transaction count and volume
 -- Leaderboard query for the analytics dashboard.
 
 WITH parsed_attributed_txs AS (
@@ -10,13 +10,13 @@ WITH parsed_attributed_txs AS (
         sender,
         value_eth,
         fee_eth,
-        builder_code
+        builder_tag
     FROM query_XXXXXX -- Replace with Query 1 saved query ID
     WHERE block_time >= NOW() - INTERVAL '28' DAY
 )
 
 SELECT
-    builder_code,
+    builder_tag,
     -- Transaction metrics
     COUNT(*) AS tx_count_28d,
     COUNT(DISTINCT sender) AS unique_users_28d,
@@ -30,6 +30,6 @@ SELECT
     MIN(block_time) AS first_tx_28d,
     MAX(block_time) AS last_tx_28d
 FROM parsed_attributed_txs
-GROUP BY builder_code
+GROUP BY builder_tag
 ORDER BY tx_count_28d DESC
 LIMIT 50

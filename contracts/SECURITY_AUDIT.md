@@ -1,10 +1,10 @@
-# Security Audit Checklist - CodesRegistry
+# Security Audit Checklist - TagRegistry
 
 ## Slither Static Analysis
 
 **Tool:** Slither v0.11.5
 **Date:** 2026-03-18
-**Result:** Zero findings on CodesRegistry.sol
+**Result:** Zero findings on TagRegistry.sol
 
 All 46 findings are from OpenZeppelin library code (Math.sol, Bytes.sol, etc.) and are known informational-level notes about the library's intentional implementation patterns (XOR in Newton's method, assembly in ERC721Utils, etc.). No high, medium, or low severity findings on our contract.
 
@@ -29,7 +29,7 @@ python3 -m slither .
 - [x] No reentrancy risk (no ETH transfers, no external contract calls besides ERC-721 internals)
 
 ### Events
-- [x] `CodeMinted(uint256 indexed tokenId, string code, address indexed owner)` emitted on every mint
+- [x] `TagMinted(uint256 indexed tokenId, string code, address indexed owner)` emitted on every mint
 - [x] Standard ERC-721 `Transfer` event emitted on mint and transfer (via OpenZeppelin)
 - [x] `indexed` on `tokenId` and `owner` for efficient log filtering
 
@@ -42,7 +42,7 @@ python3 -m slither .
 ### No Hardcoded Addresses
 - [x] No hardcoded addresses in contract
 - [x] No constructor parameters needed (no external dependencies)
-- [x] Contract name and symbol set via constructor: `ERC721("Ethereum Builder Codes", "ETHCODE")`
+- [x] Contract name and symbol set via constructor: `ERC721("BuilderTag", "BTAG")`
 
 ### Gas Efficiency
 - [x] Custom errors used (not `require` strings) for gas savings
@@ -73,14 +73,14 @@ python3 -m slither .
 
 1. **Verify on Etherscan:**
    ```bash
-   forge verify-contract <ADDRESS> src/CodesRegistry.sol:CodesRegistry \
+   forge verify-contract <ADDRESS> src/TagRegistry.sol:TagRegistry \
      --chain mainnet \
      --etherscan-api-key <KEY>
    ```
 
 2. **Confirm deployment:**
-   - Call `name()` → "Ethereum Builder Codes"
-   - Call `symbol()` → "ETHCODE"
+   - Call `name()` → "BuilderTag"
+   - Call `symbol()` → "BTAG"
    - Mint a test code and verify `ownerOfCode()` returns deployer
 
 3. **Update frontend:**

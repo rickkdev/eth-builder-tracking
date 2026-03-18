@@ -1,9 +1,9 @@
 -- Query 6: All registered codes with owners
 -- Replaces the need for a subgraph - provides the full registry of minted codes.
--- Reads CodeMinted events from the CodesRegistry contract.
+-- Reads TagMinted events from the TagRegistry contract.
 --
--- Replace {{codes_registry_address}} with the deployed CodesRegistry contract address.
--- Replace the topic1 value with keccak256("CodeMinted(uint256,string,address)").
+-- Replace {{tag_registry_address}} with the deployed TagRegistry contract address.
+-- Replace the topic1 value with keccak256("TagMinted(uint256,string,address)").
 
 WITH minted_codes AS (
     SELECT
@@ -24,9 +24,9 @@ WITH minted_codes AS (
         tx_hash AS mint_tx_hash
     FROM ethereum.logs
     WHERE
-        contract_address = {{codes_registry_address}}
-        -- CodeMinted event topic - replace with actual keccak256 hash
-        AND topic1 = 0x -- Replace with keccak256("CodeMinted(uint256,string,address)")
+        contract_address = {{tag_registry_address}}
+        -- TagMinted event topic - replace with actual keccak256 hash
+        AND topic1 = 0x -- Replace with keccak256("TagMinted(uint256,string,address)")
 ),
 
 -- Track ERC-721 transfers to get current owner
@@ -40,7 +40,7 @@ transfers AS (
         block_number
     FROM ethereum.logs
     WHERE
-        contract_address = {{codes_registry_address}}
+        contract_address = {{tag_registry_address}}
         -- Transfer(address,address,uint256) - standard ERC-721 event
         AND topic0 = 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
 ),

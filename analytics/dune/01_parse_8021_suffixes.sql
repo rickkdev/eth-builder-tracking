@@ -1,6 +1,6 @@
--- Query 1: Parse transactions with ERC-8021 builder code suffixes
+-- Query 1: Parse transactions with ERC-8021 builder tag suffixes
 -- Scans the trailing bytes of transaction calldata for the repeating 0x8021 marker,
--- then extracts the ASCII builder code.
+-- then extracts the ASCII builder tag.
 --
 -- ERC-8021 suffix format (appended to end of calldata):
 --   [0x00 schema byte][length byte][ASCII code bytes][0x8021 repeating marker]
@@ -93,7 +93,7 @@ SELECT
             CAST(p.data_length - (CAST(ceiling((2.0 + lengths.code_length) / 2) AS INTEGER) * 2) - lengths.code_length + 1 AS INTEGER),
             lengths.code_length
         )
-    ) AS builder_code
+    ) AS builder_tag
 FROM parsed p
 CROSS JOIN UNNEST(sequence(1, 32)) AS lengths(code_length)
 WHERE

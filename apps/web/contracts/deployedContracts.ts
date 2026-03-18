@@ -1,5 +1,5 @@
 /**
- * CodesRegistry contract ABI and deployment addresses.
+ * TagRegistry contract ABI and deployment addresses.
  * Update the address fields once deployed to each network.
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   // Mainnet - update address after deployment
   1: {
-    CodesRegistry: {
+    TagRegistry: {
       address: "0x0000000000000000000000000000000000000000",
       abi: [
         { type: "constructor", inputs: [], stateMutability: "nonpayable" },
@@ -181,7 +181,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "CodeMinted",
+          name: "TagMinted",
           inputs: [
             { name: "tokenId", type: "uint256", indexed: true, internalType: "uint256" },
             { name: "code", type: "string", indexed: false, internalType: "string" },
@@ -256,7 +256,7 @@ const deployedContracts = {
   },
   // Sepolia testnet - update address after deployment
   11155111: {
-    CodesRegistry: {
+    TagRegistry: {
       address: "0x0000000000000000000000000000000000000000",
       abi: [
         { type: "constructor", inputs: [], stateMutability: "nonpayable" },
@@ -297,7 +297,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "CodeMinted",
+          name: "TagMinted",
           inputs: [
             { name: "tokenId", type: "uint256", indexed: true, internalType: "uint256" },
             { name: "code", type: "string", indexed: false, internalType: "string" },

@@ -56,7 +56,7 @@ const ClaimPage: NextPage = () => {
 
   // On-chain availability check
   const { data: exists, isLoading: isCheckingAvailability } = useScaffoldReadContract({
-    contractName: "CodesRegistry",
+    contractName: "TagRegistry",
     functionName: "codeExists",
     args: [debouncedCode || undefined],
     watch: false,
@@ -67,7 +67,7 @@ const ClaimPage: NextPage = () => {
 
   // Mint hook
   const { writeContractAsync, isMining } = useScaffoldWriteContract({
-    contractName: "CodesRegistry",
+    contractName: "TagRegistry",
   });
 
   const handleMint = useCallback(async () => {
@@ -106,7 +106,7 @@ const ClaimPage: NextPage = () => {
 
   // Read minted token ID after success
   const { data: tokenId } = useScaffoldReadContract({
-    contractName: "CodesRegistry",
+    contractName: "TagRegistry",
     functionName: "tokenIdForCode",
     args: [mintSuccess ? code : undefined],
     watch: false,
@@ -130,15 +130,15 @@ const ClaimPage: NextPage = () => {
   return (
     <div className="flex items-center flex-col grow pt-10 px-4">
       <div className="max-w-lg w-full">
-        <h1 className="text-center text-3xl font-bold mb-2">Claim a Builder Code</h1>
+        <h1 className="text-center text-3xl font-bold mb-2">Claim a Builder Tag</h1>
         <p className="text-center text-base-content/70 mb-8">
-          Mint a unique code as an ERC-721 NFT. Your code will be used to attribute transactions to you.
+          Mint a unique tag as an ERC-721 NFT. Your tag will be used to track transactions from your dApp.
         </p>
 
         {/* Code Input */}
         <div className="form-control w-full">
           <label className="label">
-            <span className="label-text font-medium">Builder Code</span>
+            <span className="label-text font-medium">Builder Tag</span>
             <span className="label-text-alt text-base-content/50">
               {code.length}/{MAX_LENGTH}
             </span>
@@ -262,7 +262,7 @@ const ClaimPage: NextPage = () => {
             </div>
             <div className="mt-4">
               <Link href="/my-codes" className="btn btn-outline btn-sm w-full">
-                View My Codes
+                View My Tags
               </Link>
             </div>
           </div>

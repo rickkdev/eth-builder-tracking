@@ -1,7 +1,7 @@
 /**
- * End-to-end integration test for Ethereum Builder Codes.
+ * End-to-end integration test for BuilderTag.
  *
- * Deploys CodesRegistry, mints codes, sends attributed transactions with
+ * Deploys TagRegistry, mints tags, sends tracked transactions with
  * ox/erc8021 suffixes, and verifies the complete tracking flow.
  *
  * Requires a local Anvil instance running on http://127.0.0.1:8545.
@@ -40,7 +40,7 @@ function getContractArtifact() {
   const contractsDir = join(__dirname, "..", "..", "contracts");
   // Build first to ensure artifacts exist
   execSync("forge build", { cwd: contractsDir, stdio: "pipe" });
-  const artifact = require(join(contractsDir, "out", "CodesRegistry.sol", "CodesRegistry.json"));
+  const artifact = require(join(contractsDir, "out", "TagRegistry.sol", "TagRegistry.json"));
   return {
     abi: artifact.abi,
     bytecode: artifact.bytecode.object as Hex,
@@ -109,7 +109,7 @@ function assertEqual(actual: unknown, expected: unknown, message: string): void 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log("\n═══ Ethereum Builder Codes E2E Test ═══\n");
+  console.log("\n═══ BuilderTag E2E Test ═══\n");
 
   try {
     // ── Setup ──
@@ -146,7 +146,7 @@ async function main() {
     });
 
     // ── Deploy ──
-    console.log("\n1. Deploy CodesRegistry:");
+    console.log("\n1. Deploy TagRegistry:");
     const deployHash = await walletClient0.deployContract({
       abi,
       bytecode,

@@ -2,15 +2,15 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import "../src/CodesRegistry.sol";
+import "../src/TagRegistry.sol";
 
-contract CodesRegistryTest is Test {
-    CodesRegistry public registry;
+contract TagRegistryTest is Test {
+    TagRegistry public registry;
     address public alice = makeAddr("alice");
     address public bob = makeAddr("bob");
 
     function setUp() public {
-        registry = new CodesRegistry();
+        registry = new TagRegistry();
     }
 
     function test_mint() public {
@@ -28,7 +28,7 @@ contract CodesRegistryTest is Test {
     function test_mintEmitsEvent() public {
         vm.prank(alice);
         vm.expectEmit(true, true, false, true);
-        emit CodesRegistry.CodeMinted(0, "test_code", alice);
+        emit TagRegistry.TagMinted(0, "test_code", alice);
         registry.mint("test_code");
     }
 
@@ -49,18 +49,18 @@ contract CodesRegistryTest is Test {
         registry.mint("unique");
 
         vm.prank(bob);
-        vm.expectRevert(CodesRegistry.CodeAlreadyExists.selector);
+        vm.expectRevert(TagRegistry.CodeAlreadyExists.selector);
         registry.mint("unique");
     }
 
     function test_revertEmptyCode() public {
-        vm.expectRevert(CodesRegistry.CodeEmpty.selector);
+        vm.expectRevert(TagRegistry.CodeEmpty.selector);
         registry.mint("");
     }
 
     function test_revertCodeTooLong() public {
         // 33 chars
-        vm.expectRevert(CodesRegistry.CodeTooLong.selector);
+        vm.expectRevert(TagRegistry.CodeTooLong.selector);
         registry.mint("abcdefghijklmnopqrstuvwxyz1234567");
     }
 
@@ -73,17 +73,17 @@ contract CodesRegistryTest is Test {
     }
 
     function test_revertInvalidCharsUppercase() public {
-        vm.expectRevert(CodesRegistry.CodeInvalidChar.selector);
+        vm.expectRevert(TagRegistry.CodeInvalidChar.selector);
         registry.mint("Hello");
     }
 
     function test_revertInvalidCharsSpace() public {
-        vm.expectRevert(CodesRegistry.CodeInvalidChar.selector);
+        vm.expectRevert(TagRegistry.CodeInvalidChar.selector);
         registry.mint("has space");
     }
 
     function test_revertInvalidCharsDash() public {
-        vm.expectRevert(CodesRegistry.CodeInvalidChar.selector);
+        vm.expectRevert(TagRegistry.CodeInvalidChar.selector);
         registry.mint("has-dash");
     }
 
@@ -108,12 +108,12 @@ contract CodesRegistryTest is Test {
     }
 
     function test_tokenIdForCodeRevertsNotFound() public {
-        vm.expectRevert(CodesRegistry.CodeNotFound.selector);
+        vm.expectRevert(TagRegistry.CodeNotFound.selector);
         registry.tokenIdForCode("nonexistent");
     }
 
     function test_ownerOfCodeRevertsNotFound() public {
-        vm.expectRevert(CodesRegistry.CodeNotFound.selector);
+        vm.expectRevert(TagRegistry.CodeNotFound.selector);
         registry.ownerOfCode("nonexistent");
     }
 

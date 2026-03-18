@@ -15,7 +15,7 @@ export const enabledChains = targetNetworks.find((network: Chain) => network.id 
 
 // ERC-8021 dataSuffix for builder code attribution
 // Set once here and auto-applied to ALL transactions from this app
-const BUILDER_CODE = "ethbuildercodes";
+const BUILDER_CODE = "buildertag";
 export const builderDataSuffix = Attribution.toDataSuffix({ codes: [BUILDER_CODE] }) as `0x${string}`;
 
 export const wagmiConfig = createConfig({

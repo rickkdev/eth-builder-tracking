@@ -1,6 +1,6 @@
-# Ethereum Builder Codes - Contracts
+# BuilderTag - Contracts
 
-ERC-721 registry contract for Ethereum Builder Codes. Each unique ASCII code (1-32 lowercase alphanumeric + underscore) is minted as an NFT.
+ERC-721 registry contract for BuilderTag. Each unique ASCII code (1-32 lowercase alphanumeric + underscore) is minted as an NFT.
 
 ## Prerequisites
 
@@ -112,5 +112,5 @@ forge verify-contract \
   --chain-id 1 \
   --etherscan-api-key $ETHERSCAN_API_KEY \
   DEPLOYED_CONTRACT_ADDRESS \
-  src/CodesRegistry.sol:CodesRegistry
+  src/TagRegistry.sol:TagRegistry
 ```

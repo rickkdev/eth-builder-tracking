@@ -1,4 +1,4 @@
--- Query 3: Daily volume (ETH), gas fees, and unique users per builder code
+-- Query 3: Daily volume (ETH), gas fees, and unique users per builder tag
 -- Aggregates attributed transaction metrics at daily granularity per code.
 --
 -- Depends on: Query 1 logic for parsing ERC-8021 suffixes.
@@ -22,13 +22,13 @@ WITH parsed_attributed_txs AS (
         gas_used,
         gas_price,
         fee_eth,
-        builder_code
+        builder_tag
     FROM query_XXXXXX -- Replace XXXXXX with Query 1's saved query ID
 )
 
 SELECT
     DATE_TRUNC('day', block_time) AS day,
-    builder_code,
+    builder_tag,
     -- Transaction count
     COUNT(*) AS tx_count,
     -- Unique senders (users)
@@ -44,5 +44,5 @@ SELECT
 FROM parsed_attributed_txs
 GROUP BY
     DATE_TRUNC('day', block_time),
-    builder_code
+    builder_tag
 ORDER BY day DESC, total_volume_eth DESC

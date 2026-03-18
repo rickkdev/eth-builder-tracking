@@ -3,14 +3,14 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract CodesRegistry is ERC721 {
+contract TagRegistry is ERC721 {
     uint256 private _nextTokenId;
 
     mapping(uint256 tokenId => string code) private _codes;
     mapping(bytes32 codeHash => uint256 tokenId) private _codeToTokenId;
     mapping(bytes32 codeHash => bool exists) private _codeExists;
 
-    event CodeMinted(uint256 indexed tokenId, string code, address indexed owner);
+    event TagMinted(uint256 indexed tokenId, string code, address indexed owner);
 
     error CodeEmpty();
     error CodeTooLong();
@@ -18,7 +18,7 @@ contract CodesRegistry is ERC721 {
     error CodeAlreadyExists();
     error CodeNotFound();
 
-    constructor() ERC721("Ethereum Builder Codes", "ETHCODE") {}
+    constructor() ERC721("BuilderTag", "BTAG") {}
 
     function mint(string calldata code) external returns (uint256) {
         uint256 len = bytes(code).length;
@@ -46,7 +46,7 @@ contract CodesRegistry is ERC721 {
 
         _mint(msg.sender, tokenId);
 
-        emit CodeMinted(tokenId, code, msg.sender);
+        emit TagMinted(tokenId, code, msg.sender);
 
         return tokenId;
     }

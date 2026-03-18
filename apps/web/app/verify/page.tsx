@@ -27,14 +27,14 @@ const VerifyPage: NextPage = () => {
   const firstCode = result?.found && result.codes?.[0] ? result.codes[0] : undefined;
 
   const { data: codeOwner } = useScaffoldReadContract({
-    contractName: "CodesRegistry",
+    contractName: "TagRegistry",
     functionName: "ownerOfCode",
     args: [firstCode],
     watch: false,
   });
 
   const { data: codeExistsOnChain } = useScaffoldReadContract({
-    contractName: "CodesRegistry",
+    contractName: "TagRegistry",
     functionName: "codeExists",
     args: [firstCode],
     watch: false,
@@ -91,7 +91,7 @@ const VerifyPage: NextPage = () => {
       <div className="max-w-lg w-full">
         <h1 className="text-center text-3xl font-bold mb-2">Verify Transaction</h1>
         <p className="text-center text-base-content/70 mb-8">
-          Check if an Ethereum transaction contains an ERC-8021 builder code attribution suffix.
+          Check if an Ethereum transaction contains an ERC-8021 builder tag suffix.
         </p>
 
         {/* Tx Hash Input */}
@@ -147,7 +147,7 @@ const VerifyPage: NextPage = () => {
         {/* Result: Found */}
         {result?.found && result.codes && (
           <div className="mt-6 p-6 bg-success/10 border border-success/30 rounded-xl">
-            <h3 className="text-lg font-bold text-success mb-3">Builder Code Found!</h3>
+            <h3 className="text-lg font-bold text-success mb-3">Builder Tag Found!</h3>
             <div className="space-y-3 text-sm">
               {result.codes.map((code, i) => (
                 <div key={i} className="p-3 bg-base-100 rounded-lg">
@@ -189,9 +189,9 @@ const VerifyPage: NextPage = () => {
         {/* Result: Not Found */}
         {result && !result.found && (
           <div className="mt-6 p-6 bg-base-200 rounded-xl">
-            <h3 className="text-lg font-bold mb-2">No Builder Code Found</h3>
+            <h3 className="text-lg font-bold mb-2">No Builder Tag Found</h3>
             <p className="text-base-content/70 text-sm">
-              This transaction does not contain an ERC-8021 builder code attribution suffix.
+              This transaction does not contain an ERC-8021 builder tag suffix.
             </p>
             {etherscanLink && (
               <div className="mt-3">
@@ -206,11 +206,11 @@ const VerifyPage: NextPage = () => {
         {/* Info */}
         <div className="mt-8 text-sm text-base-content/50 space-y-1">
           <p>
-            <strong>ERC-8021</strong> appends a builder code suffix to transaction calldata for attribution tracking.
+            <strong>ERC-8021</strong> appends a builder tag suffix to transaction calldata for tracking.
           </p>
           <p>
             The suffix ends with a repeating <code className="font-mono text-xs">0x8021</code> marker that identifies
-            the builder code.
+            the builder tag.
           </p>
         </div>
       </div>

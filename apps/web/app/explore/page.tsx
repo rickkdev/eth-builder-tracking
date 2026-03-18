@@ -27,7 +27,7 @@ type SortOption = "newest" | "oldest";
 // CodeMinted event ABI
 const CODE_MINTED_EVENT_ABI = {
   type: "event",
-  name: "CodeMinted",
+  name: "TagMinted",
   inputs: [
     { name: "tokenId", type: "uint256", indexed: true },
     { name: "code", type: "string", indexed: false },
@@ -40,7 +40,7 @@ const ExploreContent = () => {
   const highlightCode = searchParams.get("code");
   const { targetNetwork } = useTargetNetwork();
   const publicClient = usePublicClient({ chainId: targetNetwork.id });
-  const { data: contractInfo } = useDeployedContractInfo({ contractName: "CodesRegistry" });
+  const { data: contractInfo } = useDeployedContractInfo({ contractName: "TagRegistry" });
 
   const [codes, setCodes] = useState<CodeEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -161,7 +161,7 @@ const ExploreContent = () => {
     <div className="flex items-center flex-col grow pt-10 px-4">
       <div className="max-w-5xl w-full">
         <h1 className="text-center text-3xl font-bold mb-2">Registry Explorer</h1>
-        <p className="text-center text-base-content/70 mb-8">Browse all minted builder codes on Ethereum.</p>
+        <p className="text-center text-base-content/70 mb-8">Browse all minted builder tags on Ethereum.</p>
 
         {/* Search and Sort */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
